@@ -7,6 +7,7 @@ from skimage.filters.rank import enhance_contrast
 from matplotlib import pyplot as plt
 from skimage.morphology import disk
 from skimage.filters.rank import mean_bilateral
+from math import ceil
 
 
 def open(path):
@@ -49,9 +50,23 @@ def showhist(image):
     plt.hist(image.flatten(), 256, range=(0, 1))
     plt.show()
 
-def binary_filter(image):
-    brightness = np.sum(image)/image.size
-    threshold = brightness+0.3
-    print(threshold)
+def binary_filter(image, threshold = False, percentage = 0.75):
+    """
+    My binary filter
+    :param image:
+    :param threshold: set threshold manually
+    :param percentage: get brightest percentage of image
+    :return:
+    """
+
+    print(np.sort(image.flatten()))
+    if not threshold:
+        ord_img = np.sort(image.flatten())
+        value = ceil(len(ord_img) * percentage)
+        if value < len(ord_img):
+            threshold = ord_img[value]
+        else:
+            print("threshold too high")
+            threshold = 0.5
     binary = image > threshold
     return binary

@@ -7,12 +7,10 @@ allpost, allpre = open("DATA")
 
 for img in (allpost):
 
-    # img = allpost[2]
     #
     img = preprocess(img)
 
-    # showhist(img)
 
-    img = binary_filter(img)
+    img = binary_filter(img, percentage=0.95)
 
     show(img)
