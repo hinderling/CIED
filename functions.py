@@ -5,6 +5,10 @@ import numpy as np
 
 
 def open(path):
+    """
+    Will return two lists of images as np arrays
+    path is usually "DATA"
+    """
 
     folders = glob(f"{path}/*")
 
