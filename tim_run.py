@@ -2,11 +2,17 @@ from functions import *
 allpost, allpre = open("DATA")
 
 
-img = allpost[0]
-
-show(img)
-
-img = preprocess(img)
 
 
-show(img)
+
+for img in (allpost):
+
+    # img = allpost[2]
+    #
+    img = preprocess(img)
+
+    # showhist(img)
+
+    img = binary_filter(img)
+
+    show(img)

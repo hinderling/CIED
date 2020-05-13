@@ -18,19 +18,40 @@ def open(path):
     allpost = []
     allpre = []
     for folder in folders:
-        allpost.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png")))
-        allpre.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png")))
+        allpost.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png").convert("L")))
+        allpre.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png").convert("L")))
 
     return allpost, allpre
 
 def preprocess(image):
     """
     apply adaptive histgram equalization, sharpening filter may not be needed
+
+    Pixel values are now floats between 0 and 1
     """
     image = exposure.equalize_adapthist(image)
     return image
 
 
-def show(image):
-    plt.imshow(image, cmap=plt.get_cmap('gray'))
+def show(image, title = None):
+
+    plt.imshow(image)
+
+    plt.title(title)
     plt.show()
+
+
+
+def showhist(image):
+    plt.subplot(121)
+    plt.imshow(image, cmap=plt.get_cmap('gray'))
+    plt.subplot(122)
+    plt.hist(image.flatten(), 256, range=(0, 1))
+    plt.show()
+
+def binary_filter(image):
+    brightness = np.sum(image)/image.size
+    threshold = brightness+0.3
+    print(threshold)
+    binary = image > threshold
+    return binary
