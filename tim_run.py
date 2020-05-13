@@ -1,4 +1,12 @@
 from functions import *
 allpost, allpre = open("DATA")
 
-print(allpost[0].shape)
+
+img = allpost[0]
+
+show(img)
+
+img = preprocess(img)
+
+
+show(img)
