@@ -20,7 +20,7 @@ def open(path):
     allpre = []
     for folder in folders:
         allpost.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png").convert("L")))
-        allpre.append(np.asarray(Image.open(f"{folder}/{basename(folder)}post.png").convert("L")))
+        allpre.append(np.asarray(Image.open(f"{folder}/{basename(folder)}pre.png").convert("L")))
 
     return allpost, allpre
 
