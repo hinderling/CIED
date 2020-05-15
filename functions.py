@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 from skimage.morphology import disk, binary_dilation, skeletonize
 from skimage.filters.rank import mean_bilateral
 from math import ceil, sqrt
+from skimage.morphology import disk, binary_dilation
 
 
 def open(path):
@@ -50,7 +51,7 @@ def showhist(image):
     plt.hist(image.flatten(), 256, range=(0, 1))
     plt.show()
 
-def binary_filter(image, threshold = False, percentage = 0.75):
+def binary_filter(image, threshold = False, percentage = 0.6, size = 10):
     """
     :param image:
     :param threshold: set threshold manually
@@ -68,6 +69,7 @@ def binary_filter(image, threshold = False, percentage = 0.75):
             print("threshold too high")
             threshold = 0.5
     binary = image > threshold
+    binary = binary_dilation(binary,selem=disk(size))
     return binary
 
 def distance(p1,p2):
