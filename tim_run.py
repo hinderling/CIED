@@ -1,12 +1,8 @@
 from functions import *
-allpost, allpre = open("DATA")
-from functions import *
 from math import sqrt
 from skimage.feature import blob_log
-
 from skimage.color import rgb2gray
 import matplotlib.pyplot as plt
-
 
 allpost, allpre = open("DATA")
 
