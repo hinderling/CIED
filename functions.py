@@ -58,8 +58,6 @@ def binary_filter(image, threshold = False, percentage = 0.6, size = 15):
     :param percentage: get brightest percentage of image
     :return:
     """
-
-    print(np.sort(image.flatten()))
     if not threshold:
         ord_img = np.sort(image.flatten())
         value = ceil(len(ord_img) * percentage)
@@ -75,3 +73,35 @@ def binary_filter(image, threshold = False, percentage = 0.6, size = 15):
 def distance(p1,p2):
     distance = sqrt(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2))
     return distance
+
+def angles(blobs):
+    """
+    most inefficient piece of code ever
+    :param blobs:
+    :return:
+    """
+    angles = np.zeros((len(blobs), 2))
+    for i, blob1 in enumerate(blobs):
+        angles[i][0] = int(i)
+        vectors = []
+        all_angles = []
+        for n, blob2 in enumerate(blobs):
+            if i !=  n:
+                y1, x1, r = blob1
+                y2, x2, r = blob2
+                y = y2-y1
+                x = x2-x1
+                v1 = (x,y)
+                for v2 in vectors:
+                    all_angles.append(angle(v1, v2))
+                vectors.append(v1)
+        angles[i][1] = max(all_angles)
+    angles = angles[angles[:, 1].argsort()][:len(angles)]
+    return angles
+
+def angle(v1,v2):
+    unit_vector_1 = v1 / np.linalg.norm(v1)
+    unit_vector_2 = v2 / np.linalg.norm(v2)
+    dot_product = np.dot(unit_vector_1, unit_vector_2)
+    angle = np.arccos(dot_product)
+    return angle

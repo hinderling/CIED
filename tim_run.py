@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 allpost, allpre = open("DATA")
 
-for image in allpost:
+for name, image in enumerate(allpost):
 
     image_gray = rgb2gray(image)
 
@@ -49,19 +49,24 @@ for image in allpost:
                 distances[n][1] += dist
         distances = distances[distances[:, 1].argsort()][:len(distances)]
         last = int(distances[len(distances)-1][0])
-        print(blobs_log)
         blobs_log = np.delete(blobs_log,last, axis=0)
-        print(blobs_log)
-        print(len(blobs_log))
+
+
+    angles_vec = angles(blobs_log)
+
+    start = int(angles_vec[0][0])
 
     fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
     blobs = blobs_log
     title = 'Laplacian of Gaussian'
     ax.set_title(title)
     ax.imshow(image_gray)
-    for blob in blobs_log:
+    for i, blob in enumerate(blobs_log):
         y, x, r = blob
-        c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
+        if i == start:
+            c = plt.Circle((x, y), r, color='green', linewidth=2, fill=False)
+        else:
+            c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
         ax.add_patch(c)
 
-    plt.show()
+    plt.savefig(f"out/{name}.png")
