@@ -18,7 +18,7 @@ for image in allpost:
     p2, p98 = np.percentile(image_gray, (2, 98))
     image_gray = exposure.rescale_intensity(image_gray, in_range=(p2, p98))
 
-    mask = binary_filter(image_gray, percentage=0.95, size=10)
+    mask = binary_filter(image_gray, percentage=0.90, size=10)
 
 
     #blob detection
