@@ -3,8 +3,9 @@ from math import sqrt
 from skimage.feature import blob_log
 from skimage.color import rgb2gray
 import matplotlib.pyplot as plt
+import sys
 
-allpost, allpre = open("DATA")
+allpost, allpre = load("DATA")
 
 for name, image in enumerate(allpost):
 
@@ -65,4 +66,4 @@ for name, image in enumerate(allpost):
             c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
         ax.add_patch(c)
 
-    plt.savefig(f"out/{name}.png")
+    plt.show()

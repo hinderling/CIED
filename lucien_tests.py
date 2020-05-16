@@ -6,7 +6,7 @@ from skimage.color import rgb2gray
 import cv2 as cv
 from sys import exit
 
-allpost, allpre = open("DATA")
+allpost, allpre = load("DATA")
 
 import matplotlib.pyplot as plt
 
