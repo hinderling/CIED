@@ -5,7 +5,7 @@ from skimage.color import rgb2gray
 import matplotlib.pyplot as plt
 import sys
 
-allpost, allpre = load("DATA")
+allpost, allpre,basenames = load("DATA")
 
 for name, image in enumerate(allpost):
 
