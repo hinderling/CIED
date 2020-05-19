@@ -10,6 +10,7 @@ from skimage.filters.rank import mean_bilateral
 from math import ceil, sqrt
 from skimage.morphology import disk, binary_dilation
 import csv
+import math
 
 
 def load(path):
@@ -109,8 +110,9 @@ def angle(v1, v2):
     unit_vector_1 = v1 / np.linalg.norm(v1)
     unit_vector_2 = v2 / np.linalg.norm(v2)
     dot_product = np.dot(unit_vector_1, unit_vector_2)
-    angle = np.arccos(dot_product)
-    return angle
+    b_angle = np.arccos(dot_product)
+    d_angle = b_angle / (2 * math.pi) * 360 #convert to degrees
+    return d_angle
 
 
 def gt(filename):
