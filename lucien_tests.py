@@ -3,7 +3,6 @@ from math import sqrt
 from skimage import data
 from skimage.feature import blob_dog, blob_log, blob_doh
 from skimage.color import rgb2gray
-import cv2 as cv
 from sys import exit
 
 allpost, allpre = load("DATA")
@@ -21,7 +20,6 @@ for image in allpost:
 
     #blob detection
     blobs_log = blob_log(image_gray, min_sigma = 15, max_sigma=20, num_sigma=3, threshold=.12)
-
     # comp approximated radii in the 3rd col
     blobs_log[:, 2] = blobs_log[:, 2] * sqrt(2)
 
