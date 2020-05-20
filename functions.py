@@ -11,6 +11,8 @@ from math import ceil, sqrt
 from skimage.morphology import disk, binary_dilation
 import csv
 import math
+from gt.parameters import DISTANCES, ANGLES
+from math import ceil, floor
 
 
 def load(path):
@@ -180,6 +182,7 @@ def all_angles(image):
     return angles
 
 
+
 def plot_coordinates(image, coords, title=None):
     """
     :param image: numpy array
@@ -201,6 +204,129 @@ def plot_coordinates(image, coords, title=None):
         c = plt.Circle((x, y), 20, color='red', linewidth=2, fill=False)
         ax.add_patch(c)
 
-        plt.text(x, y + 40, s=n, fontsize=5, horizontalalignment='center', verticalalignment='center')
+        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
 
     plt.show()
+
+def order(blobs, tolerance = 0, blob = True):
+    """
+    :param blobs: Result from blob detection
+    :return:
+        matrix of the format:
+    [[1     x1     y1]
+     [2     x2     y2]
+     [      ...      ]
+     [12    x12   y12]
+    """
+    chain = []
+    options = []
+
+    if blob:
+
+        angles_vec = angles(blobs)
+        start = int(angles_vec[0][0])
+        for i, blob in enumerate(blobs):
+            y, x, r = blob
+            if i == start:
+                chain.append((x, y))
+            else:
+                options.append((x, y))
+    else:
+
+        for i, element in enumerate(blobs):
+            c,x,y = element
+            if i == 11:
+                chain.append((x, y))
+            else:
+                options.append((x, y))
+
+    all_chains = []
+    all_options = []
+    # find second point(s)
+    edge = 0
+    # ground truth
+    min_dist = DISTANCES[edge][0]
+    max_dist = DISTANCES[edge][1]
+    mean_dist = DISTANCES[edge][1]
+
+    for option in options:
+
+
+        last = chain[-1]
+        l = distance(last, option)
+
+        if floor(min_dist)-(mean_dist*tolerance/100) < l < ceil(max_dist)+(mean_dist*tolerance/100):
+            temp_chain = chain.copy()
+            temp_chain.append(option)
+            temp_options = options.copy()
+            temp_options.remove(option)
+            all_chains.append(temp_chain)
+            all_options.append(temp_options)
+
+    if len(all_chains) == 0:
+        print("Order of points could not be determined")
+        numbers = [x + 1 for x in range(len(chain))]
+        chain = np.column_stack([numbers, chain])
+        return chain
+    # else:
+    #     chain = all_chains[0]
+    # numbers = [x + 1 for x in range(len(chain))]
+    # chain = np.column_stack([numbers, chain])
+    # return chain
+
+
+    # find 3rd - 12th points
+    while all_chains:
+        for options, chain in zip(all_options,all_chains):
+            edge = len(chain)-1
+            # ground truth
+            min_dist = DISTANCES[edge][0]
+            max_dist = DISTANCES[edge][1]
+            mean_dist = DISTANCES[edge][2]
+            min_angle = DISTANCES[edge - 1][0]
+            max_angle = DISTANCES[edge - 1][1]
+            mean_angle = DISTANCES[edge - 1][2]
+
+            # comparing angles
+            x1, y1 = chain[-2]
+            x2, y2 = chain[-1]
+
+            for option in options:
+                x3, y3 = option
+
+                y_v1 = y2 - y1
+                x_v1 = x2 - x1
+                v1 = (x_v1, y_v1)
+
+                y_v2 = y3 - y2
+                x_v2 = x3 - x2
+                v2 = (x_v2, y_v2)
+
+                a = angle(v1, v2)
+
+                l = distance((x2, y2), option)
+
+                if floor(min_dist)-(mean_dist*tolerance/100) < l < ceil(max_dist)+(mean_dist*tolerance/100) \
+                        and floor(min_angle)-(mean_angle*tolerance/100) < a < ceil(max_angle)+(mean_angle*tolerance/100):
+                    temp_chain = chain.copy()
+                    temp_chain.append(option)
+                    temp_options = options.copy()
+                    temp_options.remove(option)
+                    all_chains.append(temp_chain)
+                    all_options.append(temp_options)
+                    if len(temp_chain) == 12:
+                        chain = temp_chain
+                        numbers = [x + 1 for x in range(len(chain))]
+                        chain = np.column_stack([numbers, chain])
+                        return chain
+            if len(all_chains) > 1:
+                all_chains.remove(chain)
+                all_options.remove(options)
+            else:
+                print("Order of points could not be determined")
+                chain = all_chains[0]
+                numbers = [x+1 for x in range(len(chain))]
+                chain = np.column_stack([numbers, chain])
+                return chain
+
+

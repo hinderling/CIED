@@ -7,7 +7,7 @@ import sys
 
 allpost, allpre,basenames = load("DATA")
 
-for name, image in enumerate(allpost):
+for name, image in zip(basenames,allpost):
 
     image_gray = rgb2gray(image)
 
@@ -49,21 +49,25 @@ for name, image in enumerate(allpost):
         blobs_log = np.delete(blobs_log,last, axis=0)
 
 
-    angles_vec = angles(blobs_log)
+    chain = order(gt(name), tolerance=0, blob = False)
 
-    start = int(angles_vec[0][0])
 
-    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
-    blobs = blobs_log
-    title = 'Laplacian of Gaussian'
-    ax.set_title(title)
-    ax.imshow(image_gray)
-    for i, blob in enumerate(blobs_log):
-        y, x, r = blob
-        if i == start:
-            c = plt.Circle((x, y), r, color='green', linewidth=2, fill=False)
-        else:
-            c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
-        ax.add_patch(c)
 
-    plt.show()
+    plot_coordinates(image, chain, title=None)
+
+
+
+    # fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
+    # blobs = blobs_log
+    # title = 'Laplacian of Gaussian'
+    # ax.set_title(title)
+    # ax.imshow(image_gray)
+    # for i, blob in enumerate(blobs_log):
+    #     y, x, r = blob
+    #     # if i == start:
+    #     #     c = plt.Circle((x, y), r, color='green', linewidth=2, fill=False)
+    #     # else:
+    #     c = plt.Circle((x, y), r, color='red', linewidth=2, fill=False)
+    #     ax.add_patch(c)
+    #
+    # plt.show()
