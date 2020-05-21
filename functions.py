@@ -314,6 +314,8 @@ def order(blobs, tolerance = 0, blob = True):
                     and floor(min_angle)-(mean_angle*tolerance/100) < a < ceil(max_angle)+(mean_angle*tolerance/100):
                 temp_chain = chain.copy()
                 temp_options = options.copy()
+                temp_chain.append(option)
+                temp_options.remove(option)
                 all_chains.append(temp_chain)
                 all_options.append(temp_options)
                 if len(temp_chain) == 12:
@@ -322,6 +324,7 @@ def order(blobs, tolerance = 0, blob = True):
                     numbers = [x + 1 for x in range(len(chain))]
                     chain = np.column_stack([numbers, chain])
                     return chain
+        print(len(all_chains))
 
 
     print("Order of points could not be determined")
