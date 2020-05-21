@@ -198,7 +198,7 @@ def distances_and_angles(all_electrodes):
         v=v2
         electrode_nr.append(i)
     return(electrode_nr,distances, angles)
-
+ #
 def plot_distances_angles(all_electrodes):
     '''takes a list of all electrodes, of the form
         electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
