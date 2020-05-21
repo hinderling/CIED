@@ -49,8 +49,8 @@ for image, name in zip(allpost, basenames):
         last = int(distances[len(distances)-1][0])
         blobs_log = np.delete(blobs_log,last, axis=0)
 
-    # chain = order(blobs_log, tolerance=20, blob=True)
-    chain = order(gt(name), tolerance=0, blob = False)
+    chain = order(blobs_log, tolerance=60, blob=True)
+    # chain = order(gt(name), tolerance=50, blob = False)
 
 
 
