@@ -7,6 +7,7 @@ allpost, allpre, basenames = load("DATA")
 all_distances=[]
 all_angle_values=[]
 
+
 for image, name in zip(allpost,basenames):
     # load ground truth
     ground_truth = gt(name)
@@ -19,7 +20,11 @@ for image, name in zip(allpost,basenames):
     for i in range(11):
         p1 = ground_truth[i]
         p2 = ground_truth[i+1]
-        distances.append(distance(p1, p2))
+
+        c, x1, y1 = p1
+        c, x2, y2 = p2
+
+        distances.append(distance((x1,y1), (x2,y2)))
 
     all_distances.append(distances)
 
@@ -46,17 +51,20 @@ for i in range(11):
     values = []
     for d in all_distances:
         values.append(d[i])
-    result_distances.append((min(values),max(values),mean(values),stdev(values)))
+    result_distances.append((min(values),max(values),mean(values)))
 
 result_angles = []
 for i in range(10):
     values = []
     for d in all_angle_values:
         values.append(d[i])
-    result_angles.append((min(values),max(values),mean(values),stdev(values)))
+    result_angles.append((min(values),max(values),mean(values)))
 
 
 print(result_distances)
 
 print(result_angles)
 
+from matplotlib import pyplot as plt
+plt.imshow(image)
+plt.show()

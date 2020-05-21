@@ -7,7 +7,8 @@ import sys
 
 allpost, allpre,basenames = load("DATA")
 
-for name, image in zip(basenames,allpost):
+# for name, image in zip(basenames[:1],allpost[:1]):
+for image, name in zip(allpost, basenames):
 
     image_gray = rgb2gray(image)
 
@@ -48,7 +49,7 @@ for name, image in zip(basenames,allpost):
         last = int(distances[len(distances)-1][0])
         blobs_log = np.delete(blobs_log,last, axis=0)
 
-
+    # chain = order(blobs_log, tolerance=20, blob=True)
     chain = order(gt(name), tolerance=0, blob = False)
 
 
