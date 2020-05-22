@@ -137,7 +137,9 @@ def image_names_gt():
         for row in labels:
             if row[3] not in out:
                 out.append(row[3][:4])
+    out=list(set(out)) #keep only unique values in list
     return out
+
 
 #to plot ground truth data
 print(plot_gt_distances_angles(image_names_gt()))
