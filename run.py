@@ -15,6 +15,7 @@
 ########################################################################################################################
 # IMPORTS
 from functions import *
+import csv
 
 ########################################################################################################################
 # PARAMETERS
@@ -31,6 +32,12 @@ FOLDER = "DATA"
 ########################################################################################################################
 # LOAD DATA
 all_post, base_names = load(FOLDER)
+
+# STORING DATA TO EXPORT TO CSV
+angles_all = []
+center_all = []
+names_all = []
+coordinates_all = []
 
 for image, name in zip(all_post, base_names):
     # START OF DELETE THIS ####################### START OF DELETE THIS ####################### START OF DELETE THIS ###
@@ -59,9 +66,16 @@ for image, name in zip(all_post, base_names):
     # center = (x,y)
     #
     # preliminary
-    angles = [69]*12
+    angles = [69] * 12
     center = (420, 69)
     #
     # END OF DELETE THIS ######################### END OF DELETE THIS ######################### END OF DELETE THIS #####
 
+    # STORING DATA TO EXPORT TO CSV
+    coordinates_all.append(coordinates)
+    angles_all.append(angles)
+    center_all.append(center)
+    names_all.append(name)
+
+save_csv(angles_all, center_all, names_all, coordinates_all)
 

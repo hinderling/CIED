@@ -280,3 +280,32 @@ def plot_coordinates(image, coords, title=None):
         plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
 
     plt.show()
+
+def save_csv(angles_all, center_all, names_all, coordinates_all):
+    """
+    Saves results to csv
+    :param angles_all: list of angles
+    :param center_all: list of centers
+    :param names_all: list of names
+    :param coordinates_all: list of coordinates
+    :return: None
+    """
+    lines = [[]] * 13
+
+    for angles, center, name, cords in zip(angles_all, center_all, names_all, coordinates_all):
+        lines[0] = lines[0]+[f'{name}_electrodes','x','y','angle','center_x','center_y','']
+
+        print(lines[0])
+
+        for i, (angle, cord) in enumerate(zip(angles, cords)):
+            if i == 0:
+                cx, cy = center
+            else:
+                cx, cy = ('','')
+            lines[i+1] = lines[i+1] + [cord[0],cord[1],cord[2],angle,cx,cy, '']
+
+    print(lines[0])
+    with open('out.csv', 'w', newline='') as out:
+        writer = csv.writer(out, delimiter=';')
+        writer.writerows(lines)
+    return None
