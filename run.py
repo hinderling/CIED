@@ -22,7 +22,7 @@ import csv
 
 # path to input folder containing cases in the folowing structure
 # FOLDER
-#   - {CASE_2}
+#   - {CASE_1}
 #       - {CASE_1}post.png
 #   - {CASE_2}
 #       - {CASE_2}post.png
