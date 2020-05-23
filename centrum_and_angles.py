@@ -140,6 +140,6 @@ def image_names_gt():
     return out
 
 
-#to plot ground truth data
-print((image_names_gt()))
+##to plot ground truth data
+print(plot_gt_distances_angles(image_names_gt()))
 #plot_distances_angles([[1,20,20], [2,15,15], [3,0,15], [4, 0,10],[5,0,5],[6,0,0],[7,-5,0],[8,-5,-5],[9,-5,-10],[10,-5,-15], [11,-5,-20],[12,-5,-21]])
