@@ -135,12 +135,11 @@ def image_names_gt():
     with open("gt/labels.csv", "r") as csvfile:
         labels = csv.reader(csvfile, delimiter=',')
         for row in labels:
-            if row[3] not in out:
-                out.append(row[3][:4])
+            out.append(row[3][:4])
     out=list(set(out)) #keep only unique values in list
     return out
 
 
 #to plot ground truth data
-print(plot_gt_distances_angles(image_names_gt()))
+print((image_names_gt()))
 #plot_distances_angles([[1,20,20], [2,15,15], [3,0,15], [4, 0,10],[5,0,5],[6,0,0],[7,-5,0],[8,-5,-5],[9,-5,-10],[10,-5,-15], [11,-5,-20],[12,-5,-21]])

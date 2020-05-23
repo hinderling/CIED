@@ -126,7 +126,7 @@ def gt(filename):
     [[1     x1     y1]
      [2     x2     y2]
      [      ...      ]
-     [12    x12   y12]
+     [12    x12   y12]]
     First row corresponds to the number of the
     electrode starting in the center
     """
@@ -271,8 +271,7 @@ def image_names_gt():
     with open("gt/labels.csv", "r") as csvfile:
         labels = csv.reader(csvfile, delimiter=',')
         for row in labels:
-            if row[3] not in out:
-                out.append(row[3][:4])
+            out.append(row[3][:4])
     out=list(set(out)) #keep only unique values in list
     return out
 
