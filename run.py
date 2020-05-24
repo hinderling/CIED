@@ -15,6 +15,7 @@
 ########################################################################################################################
 # IMPORTS
 from functions import *
+from graph import *
 import csv
 
 ########################################################################################################################
@@ -39,10 +40,10 @@ center_all = []
 names_all = []
 coordinates_all = []
 
+differences = []
 for image, name in zip(all_post, base_names):
-    # START OF DELETE THIS ####################### START OF DELETE THIS ####################### START OF DELETE THIS ###
-    #
-    # FIND POINTS
+    
+    # FIND Electrodes and store them in a matrix of this format:
     #
     # coordinates =
     # [[1     x1     y1]
@@ -50,11 +51,9 @@ for image, name in zip(all_post, base_names):
     # [      ...      ]
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
-    #
-    # preliminary
-    coordinates = gt(name)
-    #
-    # END OF DELETE THIS ######################### END OF DELETE THIS ######################### END OF DELETE THIS #####
+    
+    coordinates = find_electrodes(image)
+
 
     # START OF DELETE THIS ####################### START OF DELETE THIS ####################### START OF DELETE THIS ###
     #
