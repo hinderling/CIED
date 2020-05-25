@@ -140,8 +140,10 @@ def spectral_center(coords):
     return (center)
 
 
-def all_angles(image):
-    coords=gt(image)
+def all_angles(coords):
+    '''takes a list of all electrodes, of the form
+        [electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care]
+        just as in gt/labels.csv and returns the spectral center as well as the circular angles'''
     coords.sort()  # electrodes are sometimes not in right order
     center=spectral_center(coords)
     center_to_electrode=coords[11][1]-center[0], coords[11][2]-center[1]
@@ -151,7 +153,7 @@ def all_angles(image):
         center_to_electrode=coords[i][1]-center[0], coords[i][2]-center[1]
         new_angle=angles[-1]+angle(before_center_to_electrode, center_to_electrode)
         angles.append(new_angle)
-    return angles
+    return center, angles
 
 
 def distances_and_angles(all_electrodes):
@@ -190,7 +192,7 @@ def plot_distances_angles(all_electrodes):
     plt.plot(electrode_nr[:-1], angles)
     plt.show()
 
-
+#
 def plot_gt_distances_angles(images_list):
     '''takes a list of all gt images, returns the mean and std for the distances and angles between the electrodes
     & also plots this'''
