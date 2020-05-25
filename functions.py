@@ -192,7 +192,7 @@ def plot_distances_angles(all_electrodes):
     plt.plot(electrode_nr[:-1], angles)
     plt.show()
 
-
+#
 def plot_gt_distances_angles(images_list):
     '''takes a list of all gt images, returns the mean and std for the distances and angles between the electrodes
     & also plots this'''
