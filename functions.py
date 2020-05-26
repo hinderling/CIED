@@ -23,7 +23,7 @@ from math import ceil, sqrt
 import csv
 import math
 import statistics
-
+from scipy import stats
 
 def load(path, postonly = True):
     """
@@ -257,6 +257,46 @@ def image_names_gt():
     out=list(set(out)) #keep only unique values in list
     return out
 
+
+def gt_distances_angles1_and11(images_list):
+    '''takes a list of all gt images, returns the distances and angles 1 and 12 of each image'''
+    gt_distances = []
+    gt_angle1 = []
+    gt_angle11=[]
+    for image in images_list:
+        all_electrodes = gt(str(image))
+        all_electrodes.sort()  # electrodes are sometimes not in right order
+        electrode_nr, distances, angles = distances_and_angles(all_electrodes)
+        gt_angle1.append(angles[0])
+        gt_angle11.append(angles[9])
+        gt_distances.append(distances)
+    # gt_distances is a list of list; I would like to have a simple list instead
+    gt_distances = [item for sublist in gt_distances for item in sublist]
+    return (gt_distances, gt_angle1, gt_angle11)
+
+def find_confidence(gt_list, plot_title, plot_show=True, confidence_level=0.99):
+    '''returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
+    in a list, assuming a normal distribution.
+    If not specified differently, a plot is produced'''
+    mean=statistics.mean(gt_list)
+    CI_upper=mean+statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
+    CI_lower=mean-statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
+
+    if plot_show:
+        #plot density histogramms
+        #first for distances
+        plt.title('{}'.format(plot_title))
+        plt.hist(gt_list, bins = 20, density=True)
+        # decide from where to where we should compute theoretical distribution
+        lnspc = np.linspace(CI_lower, CI_upper, len(gt_list))
+        m, s = stats.norm.fit(gt_list) # get mean and standard deviation
+        pdf_g = stats.norm.pdf(lnspc, m, s) # now get theoretical values in our interval
+        plt.plot(lnspc, pdf_g, label="t-distribution") # plot it
+        plt.axvline(mean, color='k', linestyle='dashed', linewidth=1)
+        plt.axvline(CI_upper, color='red')
+        plt.axvline(CI_lower, color='red')
+        plt.show()
+    return(CI_lower, CI_upper)
 
 def plot_coordinates(image, coords, title=None):
     """
