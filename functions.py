@@ -159,7 +159,8 @@ def all_angles(coords):
 def distances_and_angles(all_electrodes):
     '''takes a list of all electrodes, of the form
     electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
-    just as in gt/labels.csv'''
+    just as in gt/labels.csv
+    returns distances and angles starting at the outermost electrode (eg electrode with highest nr)'''
     all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
     #start at outermost electrode
     electrode_nr=[]
@@ -267,8 +268,8 @@ def gt_distances_angles1_and11(images_list):
         all_electrodes = gt(str(image))
         all_electrodes.sort()  # electrodes are sometimes not in right order
         electrode_nr, distances, angles = distances_and_angles(all_electrodes)
-        gt_angle1.append(angles[0])
-        gt_angle11.append(angles[9])
+        gt_angle11.append(angles[0])
+        gt_angle1.append(angles[9])
         gt_distances.append(distances)
     # gt_distances is a list of list; I would like to have a simple list instead
     gt_distances = [item for sublist in gt_distances for item in sublist]

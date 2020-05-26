@@ -21,7 +21,7 @@ import csv
 ########################################################################################################################
 # PARAMETERS
 
-# path to input folder containing cases in the folowing structure
+# path to input folder containing cases in the following structure
 # FOLDER
 #   - {CASE_1}
 #       - {CASE_1}post.png
@@ -53,22 +53,8 @@ for image, name in zip(all_post, base_names):
     # First row corresponds to the number of the electrode starting in the center
     
     coordinates = find_electrodes(image)
-
-
-    # START OF DELETE THIS ####################### START OF DELETE THIS ####################### START OF DELETE THIS ###
-    #
-    # CALCULATE RESULTS
-    #
-    # angles = [t1,t2, ... , tn]
-    # same order as in coordinates array
-    #
-    # center = (x,y)
-    #
-    # preliminary
-    angles = [69] * 12
-    center = (420, 69)
-    #
-    # END OF DELETE THIS ######################### END OF DELETE THIS ######################### END OF DELETE THIS #####
+    #well I hope very much those coordinates are sorted from smallest to largest electrode, otherwise the following is wrong:
+    center, angles=all_angles(coordinates)
 
     # STORING DATA TO EXPORT TO CSV
     coordinates_all.append(coordinates)
