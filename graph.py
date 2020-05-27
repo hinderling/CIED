@@ -91,8 +91,8 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
     if len(path_chosen)==12:
         return [path_chosen]
     paths_chosen = []
-    CI_upper_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[1], 'angle 1', plot_show=False)[1]
-    CI_lower_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[2], 'angle 11', plot_show=False)[0]
+    CI_upper_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[1], 'angle 1', create_plot=False)[1]
+    CI_lower_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[2], 'angle 11', create_plot=False)[0]
     for neighbor in graph_left.neighbors(path_chosen[-1]):
         blob1 = blobs[neighbor,:]
         blob2 = blobs[path_chosen[-1],:]
@@ -177,7 +177,7 @@ def find_electrodes(input_image):
         pos.update({i:(blob[1],blob[0])})
 
     pairwise_combinations = list(itertools.combinations(range(len(blobs)), 2))
-    CI =find_confidence(gt_distances_angles1_and11(image_names_gt())[0], 'distances',plot_show=False)
+    CI =find_confidence(gt_distances_angles1_and11(image_names_gt())[0], 'distances',create_plot=False)
     for i, j in pairwise_combinations:
         blob_a = blobs[i]
         blob_b = blobs[j]

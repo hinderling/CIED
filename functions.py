@@ -275,7 +275,7 @@ def gt_distances_angles1_and11(images_list):
     gt_distances = [item for sublist in gt_distances for item in sublist]
     return (gt_distances, gt_angle1, gt_angle11)
 
-def find_confidence(gt_list, plot_title, plot_show=True, confidence_level=0.99):
+def find_confidence(gt_list, plot_title, create_plot=True, confidence_level=0.99):
     '''returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
     in a list, assuming a normal distribution.
     If not specified differently, a plot is produced'''
@@ -283,7 +283,7 @@ def find_confidence(gt_list, plot_title, plot_show=True, confidence_level=0.99):
     CI_upper=mean+statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
     CI_lower=mean-statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
 
-    if plot_show:
+    if create_plot:
         #plot density histogramms
         #first for distances
         plt.title('{}'.format(plot_title))
@@ -296,7 +296,7 @@ def find_confidence(gt_list, plot_title, plot_show=True, confidence_level=0.99):
         plt.axvline(mean, color='k', linestyle='dashed', linewidth=1)
         plt.axvline(CI_upper, color='red')
         plt.axvline(CI_lower, color='red')
-        plt.show()
+        plt.savefig('{} distribution'.format(plot_title))
     return(CI_lower, CI_upper)
 
 def plot_coordinates(image, coords, title=None):
