@@ -297,6 +297,7 @@ def find_confidence(gt_list, plot_title, create_plot=True, confidence_level=0.99
         plt.axvline(CI_upper, color='red')
         plt.axvline(CI_lower, color='red')
         plt.savefig('{} distribution'.format(plot_title))
+        plt.close()
     return(CI_lower, CI_upper)
 
 def plot_coordinates(image, coords, title=None):
