@@ -284,7 +284,7 @@ def find_confidence(gt_list, plot_title, create_plot=True, confidence_level=0.99
     CI_lower=mean-statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
 
     if create_plot:
-        #plot density histogramms
+        #plot density histograms
         #first for distances
         plt.title('{}'.format(plot_title))
         plt.hist(gt_list, bins = 20, density=True)
