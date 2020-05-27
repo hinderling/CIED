@@ -285,7 +285,6 @@ def find_confidence(gt_list, plot_title, create_plot=True, confidence_level=0.99
 
     if create_plot:
         #plot density histograms
-        #first for distances
         plt.title('{}'.format(plot_title))
         plt.hist(gt_list, bins = 20, density=True)
         # decide from where to where we should compute theoretical distribution
