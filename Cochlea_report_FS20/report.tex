@@ -50,8 +50,8 @@ As the information of the pattern to be recognized is mostly structural, a graph
 
 \begin{description}[] %Info
 \item[Electrode shape and intensity] The electrodes apper in a round shape and are brighter than the surrounding tissue. This information is already encoded in the model for blob detection.
-\item[Electrode count] There are exaclty 12 electrodes to be detected in every image
-\item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exaclty two neighbors. 
+\item[Electrode count] There are exactly 12 electrodes to be detected in every image
+\item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exactly two neighbors. 
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
 Blobs are removed sequentially until only a certain amount of blobs $n$ remain. %TODO Tim
