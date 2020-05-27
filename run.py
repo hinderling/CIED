@@ -51,9 +51,9 @@ for image, name in zip(all_post, base_names):
     # [      ...      ]
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
-    
     coordinates = find_electrodes(image)
-    #well I hope very much those coordinates are sorted from smallest to largest electrode, otherwise the following is wrong:
+    
+    # Calculate the cochlea center and angular depth from electrode positions
     center, angles=all_angles(coordinates)
 
     # STORING DATA TO EXPORT TO CSV
