@@ -241,7 +241,8 @@ def plot_gt_distances_angles(images_list):
     #edge (electrode(x--> x+1), ie x only from 2 to 11 possible
     plt.xticks(range(min(electrode_nr[:-1]), max(electrode_nr[:-1]) + 1, 1))
     plt.suptitle('Mean of ground truth data')
-    plt.show()
+    plt.savefig('gt_distances_angles')
+    plt.close()
 
     return (mean_gt_dist, mean_gt_angles)
 
