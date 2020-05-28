@@ -98,7 +98,7 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
         blob2 = blobs[path_chosen[-1],:]
         blob3 = blobs[path_chosen[-2],:]
         this_angle = blob_angle(blob1, blob2, blob3)
-        if CI_lower_border<this_angle < CI_upper_border:
+        if this_angle < 85:
             #we've found a possible neighbor!
             new_graph_full = graph_full.copy()
             new_graph_left = graph_left.copy()
@@ -182,7 +182,7 @@ def find_electrodes(input_image):
         blob_a = blobs[i]
         blob_b = blobs[j]
         dist = blob_dist(blob_a, blob_b)
-        if CI[0] <dist < CI[1]:
+        if dist <175:
             graph.add_edge(i, j, length=dist)
 
     graph = remove_unconnected(graph)

@@ -261,31 +261,105 @@ def image_names_gt():
     return out
 
 
-def gt_distances_angles1_and11(images_list):
-    '''takes a list of all gt images, returns the distances and angles 1 and 12 of each image'''
+
+def min_and_max_angles(all_electrodes, deviation_blob_detection):
+    '''takes a list of all electrodes, of the form
+    electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
+    just as in gt/labels.csv
+    and the max deviation of detected blob to true blob (i.e. 15 pixels in our blob detection)
+    returns electrode nr, min and max angles starting at the outermost electrode (eg electrode with highest nr)'''
+    all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
+    #start at outermost electrode
+    electrode_nr=[]
+    min_angles=[]
+    max_angles=[]
+    #as angles can only be calculated between 2 vectors, there will be  2 less than
+    # electrodes
+     #nr 11 corresponds to distance between electrode 12 and 11
+    for i in range(len(all_electrodes)-1,1,-1):
+        v1 = np.array([all_electrodes[i][1] + deviation_blob_detection - all_electrodes[i - 1][1] + deviation_blob_detection,all_electrodes[i][2] - all_electrodes[i - 1][2]])
+        v2 = np.array([all_electrodes[i][1] - deviation_blob_detection - all_electrodes[i - 1][1] - deviation_blob_detection,all_electrodes[i][2] - all_electrodes[i - 1][2]])
+        v3 = np.array([all_electrodes[i][1] - all_electrodes[i - 1][1],all_electrodes[i][2] + deviation_blob_detection - all_electrodes[i - 1][2] + deviation_blob_detection])
+        v4 = np.array([all_electrodes[i][1] - all_electrodes[i - 1][1],all_electrodes[i][2] - deviation_blob_detection - all_electrodes[i - 1][2] - deviation_blob_detection])
+
+        second_v1 = np.array([all_electrodes[i-1][1]+deviation_blob_detection - all_electrodes[i-2][1]+deviation_blob_detection, all_electrodes[i-1][2] - all_electrodes[i-2][2]])
+        second_v2 = np.array([all_electrodes[i-1][1] - deviation_blob_detection - all_electrodes[i - 2][1] - deviation_blob_detection,all_electrodes[i-1][2] - all_electrodes[i - 2][2]])
+        second_v3 = np.array([all_electrodes[i-1][1] - all_electrodes[i - 2][1], all_electrodes[i-1][2]+ deviation_blob_detection - all_electrodes[i - 2][2]+ deviation_blob_detection])
+        second_v4 = np.array([all_electrodes[i-1][1]  - all_electrodes[i - 2][1],all_electrodes[i-1][2]- deviation_blob_detection - all_electrodes[i - 2][2]- deviation_blob_detection])
+        particular_angle=[]
+        for v in [v1,v2,v3,v4]:
+            for second_v in [second_v1, second_v2,second_v3,second_v4]:
+                particular_angle.append(angle(v,second_v))
+        min_angles.append(min(particular_angle))
+        max_angles.append(max(particular_angle))
+        electrode_nr.append(i)
+    return(electrode_nr, min_angles,max_angles)
+
+def CI_gt_distances_angles(images_list, deviation_blob_detection=15):
+    '''takes a list of all gt images, returns the CI of the distances, the CI and mean of each angle in a dictionary, the
+    min possible angle and the max possible angle
+    The deviation of the blob detection can be specified, otherwise it is just set to 15 (deviation of our blob detection)'''
     gt_distances = []
-    gt_angle1 = []
-    gt_angle11=[]
+    gt_angles=[]
+    gt_min_angles=[]
+    gt_max_angles=[]
     for image in images_list:
         all_electrodes = gt(str(image))
         all_electrodes.sort()  # electrodes are sometimes not in right order
         electrode_nr, distances, angles = distances_and_angles(all_electrodes)
-        gt_angle11.append(angles[0])
-        gt_angle1.append(angles[9])
+        electrode_nr, min_angles, max_angles= min_and_max_angles(all_electrodes, deviation_blob_detection=deviation_blob_detection)
+        #those lists start at the outermost electrode (electrode 11, as for 12 there is no distance/angle)!!!
+        gt_angles.append(angles)
+        gt_min_angles.append(min_angles)
+        gt_max_angles.append(max_angles)
+        #gt_angle1.append(angles[9])
         gt_distances.append(distances)
     # gt_distances is a list of list; I would like to have a simple list instead
     gt_distances = [item for sublist in gt_distances for item in sublist]
-    return (gt_distances, gt_angle1, gt_angle11)
+    #find the CI
+    CI_dist = find_confidence(gt_distances, 'distances', create_histogram=False, deviation_blob_detection=deviation_blob_detection)
 
-def find_confidence(gt_list, plot_title, create_plot=True, confidence_level=0.99):
+    #gt_angles now: list of angles within list of images. I, however, want to have list of corresponding angles
+    # create a dictionary with the angle nr as key
+    angle_dict=create_angle_dict(angles, gt_angles, images_list)
+    min_angle_dict=create_angle_dict(min_angles, gt_min_angles, images_list)
+    max_angle_dict=create_angle_dict(max_angles, gt_max_angles, images_list)
+
+    #now I compute the mean (using the normal angles) and CI for every angle (using the min and max angles) and store it in a dict
+    CI_angles_dict = {}
+    all_possible_angles=[]
+    for key in angle_dict:
+        min_CI_angle = min(find_confidence(min_angle_dict[key], 'angle', create_histogram=False))
+        max_CI_angle=max(find_confidence(max_angle_dict[key], 'angle', create_histogram=False))
+        mü_angle = statistics.mean(angle_dict[key])
+        CI_angles_dict[key] = [min_CI_angle, max_CI_angle, mü_angle]
+        all_possible_angles.append(min_CI_angle)
+        all_possible_angles.append(max_CI_angle)
+    return (CI_dist, CI_angles_dict, min(all_possible_angles), max(all_possible_angles))
+
+def create_angle_dict (angles, gt_angles, images_list):
+    '''takes a list of image angle lists and returns a dictionary with the angle number as key and a list of the corresponding
+    angles from each image as value '''
+    angle_dict = {}
+    for i in range(len(angles)):  # ie for each of the angles between the edges connecting the electrodes
+        for x in range(len(images_list)):  # ie for each of the images
+            if 'angle' + str(9 - i) in angle_dict:
+                angle_dict['angle' + str(9 - i)].append(gt_angles[x][i])
+            else:
+                angle_dict['angle' + str(9 - i)] = [gt_angles[x][i]]
+    return(angle_dict)
+
+def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level=0.99, deviation_blob_detection=0):
     '''returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
     in a list, assuming a normal distribution.
-    If not specified differently, a plot is produced'''
+    If not specified differently, a plot is produced
+    If not specified differently, no deviation in the blob detection is considered'''
     mean=statistics.mean(gt_list)
-    CI_upper=mean+statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
-    CI_lower=mean-statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)
+    CI_upper=mean+statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)+2*deviation_blob_detection
+    CI_lower=mean-statistics.stdev(gt_list)*stats.norm.ppf((confidence_level+1)/2)-2*deviation_blob_detection
+    #because both blobs can deviate--> distance between them can be 2* deviation larger
 
-    if create_plot:
+    if create_histogram:
         #plot density histograms
         plt.title('{}'.format(plot_title))
         plt.hist(gt_list, bins = 20, density=True)
