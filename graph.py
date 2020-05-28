@@ -91,14 +91,14 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
     if len(path_chosen)==12:
         return [path_chosen]
     paths_chosen = []
-    CI_upper_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[1], 'angle 1', create_plot=False)[1]
-    CI_lower_border=find_confidence(gt_distances_angles1_and11(image_names_gt())[2], 'angle 11', create_plot=False)[0]
+    CI_upper_border=CI_gt_distances_angles(image_names_gt())[2]
+    CI_lower_border=CI_gt_distances_angles(image_names_gt())[3]
     for neighbor in graph_left.neighbors(path_chosen[-1]):
         blob1 = blobs[neighbor,:]
         blob2 = blobs[path_chosen[-1],:]
         blob3 = blobs[path_chosen[-2],:]
         this_angle = blob_angle(blob1, blob2, blob3)
-        if this_angle < 85:
+        if CI_lower_border<this_angle < CI_upper_border:
             #we've found a possible neighbor!
             new_graph_full = graph_full.copy()
             new_graph_left = graph_left.copy()
@@ -177,12 +177,12 @@ def find_electrodes(input_image):
         pos.update({i:(blob[1],blob[0])})
 
     pairwise_combinations = list(itertools.combinations(range(len(blobs)), 2))
-    CI =find_confidence(gt_distances_angles1_and11(image_names_gt())[0], 'distances',create_plot=False)
+    dist_CI=CI_gt_distances_angles(image_names_gt())[0]
     for i, j in pairwise_combinations:
         blob_a = blobs[i]
         blob_b = blobs[j]
         dist = blob_dist(blob_a, blob_b)
-        if dist <175:
+        if dist_CI[0]<dist <dist_CI[1]:
             graph.add_edge(i, j, length=dist)
 
     graph = remove_unconnected(graph)
