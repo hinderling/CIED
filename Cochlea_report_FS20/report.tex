@@ -22,18 +22,18 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-Nowadays, profound hearing losses are most commonly treated with cochlear implants (CIs), which can restore the hearing by directly stimulating the auditory nerves with electrical impulses. A CI system consists of 1) an external audio processor, 2) the transmission coil, 3) the receiver/stimulator unit and 4) the electrode array, which is inserted into the cochlea. As the cochlea is organized tonotopically, the position of the inserted electrodes is of atmost importance to estimate how a particular frequency is perceived by the patient. Therefore, the aim of this project is to determine the angular depth of the 12 inserted electrodes, using pre-and postoperational computer tomography (CT) images from multiple patients.
+Nowadays, profound hearing losses are most commonly treated with cochlear implants (CIs), which can restore the hearing by directly stimulating the auditory nerves with electrical impulses. A CI system consists of 1) an external audio processor, 2) the transmission coil, 3) the receiver/stimulator unit and 4) the electrode array, which is inserted into the cochlea. As the cochlea is organized tonotopically, the position of the inserted electrodes is of at most importance to estimate how a particular frequency is perceived by the patient. Therefore, the aim of this project is to determine the angular depth of the 12 inserted electrodes, using pre-and post-operational computer tomography (CT) images from multiple patients.
 
 
 \section{Methods}
 \subsection{Ground truth creation}
-\subsection{Electrode detection and labeling}
-This chapter describes how the electrodes are detected and labeled from innermost to outermost. 
+\subsection{Electrode detection and labelling}
+This chapter describes how the electrodes are detected and labelled from innermost to outermost. 
 \subsubsection{Preprocessing}
-The images are normalized using contrast stretching. First a lower and upper bound of the input image histogram specified, we chose the 2nd and 98th percentile. Values outside of this range are ignored in the calculation to be robust against outliers. The lower and upper bound are set as the new minimum and maximum brightness, a linear transformation is applied to stretch the intensity values over the whole dynamic range of our dataype. This function improves the contrast of low contrast images without distorting the relative intensities, while high contrast images remain mostly unchanged\footnote{\url{http://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm}}\footnote{\url{https://scikit-image.org/docs/0.9.x/auto_examples/plot_equalize.html}}. This step is necessary as threshold is applied on the response value of the following blob detection, which is dependent on the absolute image intensities.
+The images are normalized using contrast stretching. First a lower and upper bound of the input image histogram specified, we chose the 2nd and 98th percentile. Values outside of this range are ignored in the calculation to be robust against outliers. The lower and upper bound are set as the new minimum and maximum brightness, a linear transformation is applied to stretch the intensity values over the whole dynamic range of our data type. This function improves the contrast of low contrast images without distorting the relative intensities, while high contrast images remain mostly unchanged\footnote{\url{http://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm}}\footnote{\url{https://scikit-image.org/docs/0.9.x/auto_examples/plot_equalize.html}}. This step is necessary as threshold is applied on the response value of the following blob detection, which is dependent on the absolute image intensities.
 
 \subsubsection{Blob detection}
-To detect bright spots in the image which could represent electrodes, blob detecion laplacian of gaussian (LoG) blob detection is applied. It was selected over other implementations of the blob detection, as it provides the most accurate results\footnote{\url{https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_blob.html}} and computation speed is not a criterion. The second derrivatives of gaussian kernels with different sigma values are convoluted with the input image. For each image location the response value and the sigma value with which the highest response was achieved are stored. The results are filtered a) to only contain gaussian responses of certain sigma values, representing the size of the electrodes, and b) to only contain responses of a certain intensity, which filters out the response to image noise or other blob-like structures with weaker intensities than the electrodes we are interested in. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
+To detect bright spots in the image which could represent electrodes, blob detection Laplacian of Gaussian (LoG) blob detection is applied. It was selected over other implementations of the blob detection, as it provides the most accurate results\footnote{\url{https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_blob.html}} and computation speed is not a criterion. The second derivatives of Gaussian kernels with different sigma values are convoluted with the input image. For each image location the response value and the sigma value with which the highest response was achieved are stored. The results are filtered a) to only contain Gaussian responses of certain sigma values, representing the size of the electrodes, and b) to only contain responses of a certain intensity, which filters out the response to image noise or other blob-like structures with weaker intensities than the electrodes we are interested in. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
 provided by the \emph{scikit-image} \cite{scikit-image} library was used.
 See figure \ref{blobs_detected} as an example of an output. The threshold was intentionally set low, so blobs can also be detected in images where the electrodes are differentiated weaker.
 
@@ -44,14 +44,14 @@ See figure \ref{blobs_detected} as an example of an output. The threshold was in
 	\label{blobs_detected}
 \end{figure}
 
-\subsubsection{Blob selection and labeling with MLE}
-The next question is to filter the electrodes from all detected blobs and to find a path that connects them all, so they can be labeled from 1 to 12 accordingly.  
+\subsubsection{Blob selection and labelling with MLE}
+The next question is to filter the electrodes from all detected blobs and to find a path that connects them all, so they can be labelled from 1 to 12 accordingly.  
 As the information of the pattern to be recognized is mostly structural, a graph approach comes naturally. Some key information available on the electrodes can be boiled down to these points:
 
 \begin{description}[] %Info
-\item[Electrode shape and intensity] The electrodes apper in a round shape and are brighter than the surrounding tissue. This information is already encoded in the model for blob detection.
+\item[Electrode shape and intensity] The electrodes appear in a round shape and are brighter than the surrounding tissue. This information is already encoded in the model for blob detection.
 \item[Electrode count] There are exactly 12 electrodes to be detected in every image
-\item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exactly two neighbors. 
+\item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exactly two neighbours. 
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
 Blobs are removed sequentially until only a certain amount of blobs $n$ remain. %TODO Tim
@@ -60,12 +60,12 @@ A graph representation is created using the \emph{networkX} library \cite{networ
 \begin{figure}[ht]
 	\centering
   \includegraphics[width=.5\textwidth]{network_raw.png}
-	\caption{The initial graph constructed from the blobs in figure \ref{blobs_detected}. The unconnected subgraph containing node 1 will be removed in the following step, see figure \ref{graphs}}
+	\caption{The initial graph constructed from the blobs in figure \ref{blobs_detected}. The unconnected sub graph containing node 1 will be removed in the following step, see figure \ref{graphs}}
 	\label{network_raw}
 \end{figure}
 
-Disconnected subgraphs containing less than 12 electrodes are removed.
-A set of valid paths is generated by using the information of the electrode cound and spiral shape: Two neighbouring nodes are chosen as starting nodes (this is repeated for all $n$ nodes and all their neighbors). The two starting nodes are used as initialization values of $path_{1...i = len(path)} $ the following recursive function:
+Disconnected sub graphs containing less than 12 electrodes are removed.
+A set of valid paths is generated by using the information of the electrode count and spiral shape: Two neighbouring nodes are chosen as starting nodes (this is repeated for all $n$ nodes and all their neighbours). The two starting nodes are used as initialization values of $path_{1...i = len(path)} $ the following recursive function:
 
 \begin{algorithm}[H]
 	\caption{findpath($graph,path$)} 
@@ -75,11 +75,11 @@ A set of valid paths is generated by using the information of the electrode coun
 			 \State We have found 12 electrodes.
 		\Return $path$
 		\EndIf
-		\State For the node added last to the $path$ check if they have neighbors.
+		\State For the node added last to the $path$ check if they have neighbours.
 		\For {$node = [all\ neighbours\ of\ path_i, \notin path]$}
 				\State Check if we make a plausible turn by choosing this node as continuation of our path:
 				\State $\alpha$ = angle between $\overrightarrow{path_{i-1}, path_i}$ and $\overrightarrow{path_i, node}$
-				\If{$\alpha$ $<$ empirically determined treshold}
+				\If{$\alpha$ $<$ empirically determined threshold}
 					\State A new possible way to continue this graph has been found, the turn is not to sharp.
 					\State $path_{new}$ = Add $node$ to $path$
 					\State Recursively call this function with the new path:
@@ -94,7 +94,7 @@ A set of valid paths is generated by using the information of the electrode coun
 	\end{algorithmic} 
 \end{algorithm}
 
-This leads to a set of paths $P$ where each path $p_i \in P$ is valid to the constraints of having exaclty 12 nodes and not making impossible turns. Now, we filter the paths by assigning a cost function $c_a$ encoding our knowledge about the equidistance of the path: The cost is the variance of the length of all the edges connecting the 12 electrodes in the path $p_i$
+This leads to a set of paths $P$ where each path $p_i \in P$ is valid to the constraints of having exactly 12 nodes and not making impossible turns. Now, we filter the paths by assigning a cost function $c_a$ encoding our knowledge about the equidistance of the path: The cost is the variance of the length of all the edges connecting the 12 electrodes in the path $p_i$
 $$ c_a(p_i)=var(edges\in p_i)$$
 These values were then normalized with min-max normalization for each image. The path with the lowest cost was accepted as the right solution, giving us not only the 12 right nodes, but also the order in which they are connected.
 This already led to really good results in most of the images of the test set, except in two images where there was another path which had a lower edge length variance than the expected solution. These paths started further out, by wrongly assuming part of the wire leading to the outermost electrode as an electrode. To penalize these solutions, a second cost function $c_b$ was introduced, that measured the "compactness". It works by summing up all distances of each node to the mean location of all 12 nodes, assigning less cost to solutions that are nicely curled up, and more cost to solutions that are stretched out. 
@@ -155,7 +155,7 @@ The automatically detected electrode coordinates were compared with the coordina
 
 \section{Discussion}
 %TODO UNET
-The use of a graph approach allows us to be less strict on the blob filtering tresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, infering likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features.
+The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features.
 %TODO add more
 
 \section{Contributions}
