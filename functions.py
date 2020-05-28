@@ -19,7 +19,7 @@ from os.path import basename
 from PIL import Image
 import numpy as np
 from matplotlib import pyplot as plt
-from math import ceil, sqrt
+from math import sqrt
 import csv
 import math
 import statistics
@@ -119,6 +119,7 @@ def gt(filename):
     return out
 
 def spectral_center(coords):
+    """calculates and reterns the spectral center point """
     #vector from electrode 1 to electrode 2
     v1=np.array([coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]])
     #corresponding normal vector

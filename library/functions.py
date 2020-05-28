@@ -24,18 +24,30 @@ def preprocess(image):
     return image
 
 def show(image, title=None):
+    """
+    Show image
+    :param image: numpy image
+    :param title: Title
+    :return: None
+    """
     plt.imshow(image)
-
     plt.title(title)
     plt.show()
+    return None
 
 
 def showhist(image):
+    """
+    Display histogram for image
+    :param image: numpy image
+    :return: None
+    """
     plt.subplot(121)
     plt.imshow(image, cmap=plt.get_cmap('gray'))
     plt.subplot(122)
     plt.hist(image.flatten(), 256, range=(0, 1))
     plt.show()
+    return None
 
 
 def binary_filter(image, threshold=False, percentage=0.6, size=15):
@@ -43,7 +55,7 @@ def binary_filter(image, threshold=False, percentage=0.6, size=15):
     :param image:
     :param threshold: set threshold manually
     :param percentage: get brightest percentage of image
-    :return:
+    :return: biary mask
     """
     if not threshold:
         ord_img = np.sort(image.flatten())
