@@ -343,13 +343,13 @@ def create_angle_dict (angles, gt_angles, images_list):
     angle_dict = {}
     for i in range(len(angles)):  # ie for each of the angles between the edges connecting the electrodes
         for x in range(len(images_list)):  # ie for each of the images
-            if 'angle' + str(9 - i) in angle_dict:
-                angle_dict['angle' + str(9 - i)].append(gt_angles[x][i])
+            if (i) in angle_dict:
+                angle_dict[(i)].append(gt_angles[x][i])
             else:
-                angle_dict['angle' + str(9 - i)] = [gt_angles[x][i]]
+                angle_dict[(i)] = [gt_angles[x][i]]
     return(angle_dict)
 
-def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level=0.99, deviation_blob_detection=0):
+def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level=0.9, deviation_blob_detection=0):
     '''returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
     in a list, assuming a normal distribution.
     If not specified differently, a plot is produced
@@ -374,6 +374,7 @@ def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level
         plt.savefig('{} distribution'.format(plot_title))
         plt.close()
     return(CI_lower, CI_upper)
+
 
 def plot_coordinates(image, coords, title=None):
     """

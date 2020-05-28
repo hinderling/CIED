@@ -56,7 +56,7 @@ for image, name in zip(all_post, base_names):
     # [      ...      ]
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
-    coordinates = find_electrodes(image, dist_CI)
+    coordinates = find_electrodes(image, dist_CI, dict)
     print('coords',coordinates)
     print(name)
     truth=gt(str(name))

@@ -84,7 +84,7 @@ def path_compactness(blobs, path):
     distances = [distance((x_mean,y_mean), node) for node in coordinates]
     return np.sum(distances)
 
-def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
+def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs, CI_angle):
     #graph_full: the whole graph
     #graph_left: the part of the graph that is still available
     #path_chosen: list of nodes that make up this path: [starting node, ... , end node]
@@ -98,7 +98,9 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
         blob2 = blobs[path_chosen[-1],:]
         blob3 = blobs[path_chosen[-2],:]
         this_angle = blob_angle(blob1, blob2, blob3)
-        if this_angle < 85:
+        this_max_angle=CI_angle[len(path_chosen)-2][1]
+        this_min_angle=CI_angle[len(path_chosen)-2][0]
+        if this_min_angle<this_angle < this_max_angle:
             #we've found a possible neighbor!
             new_graph_full = graph_full.copy()
             new_graph_left = graph_left.copy()
@@ -106,7 +108,7 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs):
             new_path_chosen = path_chosen.copy()
             new_path_chosen.append(neighbor)
             #call the function recursively with the updated path
-            recursive_return = get_next_possible_neigbours(new_graph_full, new_graph_left, new_path_chosen, blobs)
+            recursive_return = get_next_possible_neigbours(new_graph_full, new_graph_left, new_path_chosen, blobs, CI_angle)
             for solution in recursive_return:
                 paths_chosen.append(solution)
     return paths_chosen
@@ -159,7 +161,7 @@ def output(blobs, path):
     return output
     
 
-def find_electrodes(input_image, CI_dist):
+def find_electrodes(input_image, CI_dist, CI_angle):
     ### INPUT: AN IMAGE (post scan with electrodes) 
         #e.g
         #allpost, allpre, basenames = load("DATA")
@@ -191,7 +193,7 @@ def find_electrodes(input_image, CI_dist):
             start = [node,neighbor]
             graph_new = graph.copy()
             graph_new.remove_node(node)
-            solutions = get_next_possible_neigbours(graph, graph_new, start, blobs)
+            solutions = get_next_possible_neigbours(graph, graph_new, start, blobs, CI_angle)
             for solution in solutions:
                     paths.append(solution)
 
