@@ -41,7 +41,12 @@ names_all = []
 coordinates_all = []
 
 differences = []
+
+#find in what range distance and angles can be
+dist_CI, dict, min_angle,max_angle = CI_gt_distances_angles(image_names_gt())
+
 for image, name in zip(all_post, base_names):
+
     
     # FIND Electrodes and store them in a matrix of this format:
     #
@@ -51,7 +56,7 @@ for image, name in zip(all_post, base_names):
     # [      ...      ]
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
-    coordinates = find_electrodes(image)
+    coordinates = find_electrodes(image, dist_CI)
     print('coords',coordinates)
     print(name)
     truth=gt(str(name))
