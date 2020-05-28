@@ -27,6 +27,7 @@ Nowadays, profound hearing losses are most commonly treated with cochlear implan
 
 \section{Methods}
 \subsection{Ground truth creation}
+To make a more precise analysis of the training set, we identified the coordinates of the twelve electrodes by hand. For this we used the online tool  \emph{Make Sense} \cite{makesense} .
 \subsection{Electrode detection and labelling}
 This chapter describes how the electrodes are detected and labelled from innermost to outermost. 
 \subsubsection{Preprocessing}
@@ -54,7 +55,12 @@ As the information of the pattern to be recognized is mostly structural, a graph
 \item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exactly two neighbours. 
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
-Blobs are removed sequentially until only a certain amount of blobs $n$ remain. %TODO Tim
+
+To remove outliers, we calculated the sum of the distances to the other blobs $D_{i}$ for each blob $i$ according to the formula below. Subsequently. we removed the blob that was furthest away from all others. This reduced the number of blobs to $n-1$. We repeated this process until the number of blobs was 20.
+%TODO Lucien: Gäu mir hei uf 20 Blobs reduziert?
+
+$$D_{i}=\sum_{j\neq i}^{n} \sqrt{(b_ix-b_jx)^2+(b_iy-b_jy)^2}$$
+
 A graph representation is created using the \emph{networkX} library \cite{networkx} by assuming each detected blob to be a node. Two blobs are connected with an edge if the distance between them falls into an empirically determined range (see fig. \ref{network_raw}). %TODO Dona
 
 \begin{figure}[ht]
@@ -152,10 +158,22 @@ The automatically detected electrode coordinates were compared with the coordina
 	\caption{The x and y pixel deviations of all electrodes in the training dataset from the ground truth dataset.}
 	\label{results_coord}
 \end{figure}
+%TODO Di grafik geit nid ah richtig Ort
 
 \section{Discussion}
-%TODO UNET
-The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features.
+We have investigated different methods with which the electrodes in the image can be recognized. An exciting discovery was the UNET convolutional neural network, which has recently gained notoriety for its reliable, accurate segmentation of medical images and its ability to achieve excellent results even with limited training data. The concept of this architecture is not discussed in detail in this report, as it is not included in the finalized version of our code. We created a training set with postoperative images and corresponding masks of only four examples. This was a very counter-intuitive approach, since more than a hundred times the amount of this data is usually recommended for training neural networks. To counteract overfitting,  we extensive data augmentation and included dropout layers in the architecture. After training for 300 epochs, we can show very promising results.
+
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=.5\textwidth]{UNET.jpg}
+	\caption{Electrode region prediction by UNET. The green mask indicates the region predicted to include the electrodes with a certainty of more than 95\%.}
+	\label{UNET}
+\end{figure}
+
+In the example in figure \ref{UNET}, eleven of the twelve electrodes were correctly identified. This result is quite astonishing considering the small amount of training data. On the one hand, this result can be attributed to the impressive properties of the UNET, and on the other hand it also became clear that this is a rather simple problem. We have therefore decided to use a less complex algorithm to detect the electrodes. 
+
+
+The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features. Deep learning approaches have also had a difficult time in medicine because of their difficult traceability.
 %TODO add more
 
 \section{Contributions}
