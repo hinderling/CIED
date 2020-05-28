@@ -161,7 +161,7 @@ The automatically detected electrode coordinates were compared with the coordina
 %TODO Di grafik geit nid ah richtig Ort
 
 \section{Discussion}
-We have investigated different methods with which the electrodes in the image can be recognized. An exciting discovery was the UNET convolutional neural network, which has recently gained notoriety for its reliable, accurate segmentation of medical images and its ability to achieve excellent results even with limited training data. The concept of this architecture is not discussed in detail in this report, as it is not included in the finalized version of our code. We created a training set with postoperative images and corresponding masks of only four examples. This was a very counter-intuitive approach, since more than a hundred times the amount of this data is usually recommended for training neural networks. To counteract overfitting,  we extensive data augmentation and included dropout layers in the architecture. After training for 300 epochs, we can show very promising results.
+We have investigated different methods with which the electrodes in the image can be recognized. An exciting discovery was the UNET convolutional neural network, which has recently gained notoriety for its reliable, accurate segmentation of medical images and its ability to achieve excellent results even with limited training data. The concept of this architecture is not discussed in detail in this report, as it is not included in the finalized version of our code. We created a training set with postoperative images and corresponding masks of only four examples. This was a very counter-intuitive approach, since more than a hundred times the amount of this data is usually recommended for training neural networks \cite{hestness_deep_2017, foody_effect_1995}. To counteract overfitting, we used extensive data augmentation and included dropout layers in the architecture. After training for 300 epochs, we could show very promising results.
 
 \begin{figure}[ht]
 	\centering
@@ -170,14 +170,18 @@ We have investigated different methods with which the electrodes in the image ca
 	\label{UNET}
 \end{figure}
 
-In the example in figure \ref{UNET}, eleven of the twelve electrodes were correctly identified. This result is quite astonishing considering the small amount of training data. On the one hand, this result can be attributed to the impressive properties of the UNET, and on the other hand it also became clear that this is a rather simple problem. We have therefore decided to use a less complex algorithm to detect the electrodes. 
+In the example in figure \ref{UNET}, eleven of the twelve electrodes were correctly identified in an image that was not used for training the network. This result is quite astonishing considering the small amount of training data. On the one hand, the quality of the result can be attributed to the impressive properties of the UNET, however, on the other hand it also became clear that this is a rather simple problem. Deep learning approaches have had a difficult time in medicine because of their lack of traceability. Thus, we decided to use a less complex algorithm to detect the electrodes, where every step can be followed exactly. 
 
 
-The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features. Deep learning approaches have also had a difficult time in medicine because of their difficult traceability.
+The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features.
+
+
 %TODO add more
 
 \section{Contributions}
-%TODO Tim
+The authors have worked very closely together in the realisation of this project. Lucien Hinderling and Tim Ogi investigated different methods for preprocessing and the recognition of the electrodes and finally agreed on the process presented here. Lucien Hinderling developed a graph based approach to realize the numbering of the electrodes. The individual components of the pipeline presented here were configured using data extracted by Tim Ogi from the images available to us and statistically evaluated by Dona Lerena. The calculations of the angles and positions of the electrodes and the centre point were carried out by Dona Lerena.
+
+%feel free to change it
 
 \bibliography{references}
 \bibliographystyle{apalike}
