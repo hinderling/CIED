@@ -12,7 +12,7 @@
 \usepackage{algorithm} 				%for pseudocode
 \usepackage{algpseudocode} 			%for pseudocode
 \usepackage{subcaption}				%to include subfigures
-
+\usepackage{pdflscape}					%landscape pages
 \begin{titlepage}
 \title{\textbf{Automatic Cochlear Implant Electrode Detection}\\ A graph based approach}
 \author{Tim Ogi, Lucien Hinderling, Dona Lerena}
@@ -184,12 +184,14 @@ The authors have worked very closely together in the realisation of this project
 \bibliography{references}
 \bibliographystyle{apalike}
 
+\begin{landscape}
+
 \appendix
 \section{Results: Electrode and center detection}
 \begin{figure}[ht]
-	\centering
-  \includegraphics[width=.5\textwidth]{results_complete.jpeg} %TODO
+    \includegraphics[width=\textwidth]{results.png}
 	\caption{Detected electrodes and center for all images in the dataset}
 	\label{results_complete}
 \end{figure}
+\end{landscape}
 \end{document}
