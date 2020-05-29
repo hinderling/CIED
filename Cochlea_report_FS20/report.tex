@@ -22,7 +22,7 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-Nowadays, profound hearing losses are most commonly treated with cochlear implants (CIs), which can restore the hearing by directly stimulating the auditory nerves with electrical impulses. A CI system consists of 1) an external audio processor, 2) the transmission coil, 3) the receiver/stimulator unit and 4) the electrode array, which is inserted into the cochlea. As the cochlea is organized tonotopically, the position of the inserted electrodes is of at most importance to estimate how a particular frequency is perceived by the patient. Therefore, the aim of this project is to determine the angular depth of the 12 inserted electrodes, using pre-and post-operational computer tomography (CT) images from multiple patients.
+In modern times, profound hearing loss is most commonly treated with cochlear implants (CIs), which can restore the hearing by directly stimulating the auditory nerves with electrical impulses. A CI system consists of 1) an external audio processor, 2) the transmission coil, 3) the receiver/stimulator unit and 4) the electrode array, which is inserted into the cochlea. As the cochlea is organized tonotopically, the position of the inserted electrodes can be used in a postoperative analysis to estimate how a certain frequency is perceived by the patient. The aim of this project is to determine the angular depth of the 12 inserted electrodes, using pre- and post-operational computer tomography (CT) images from multiple patients.
 
 
 \section{Methods}
@@ -34,7 +34,11 @@ This chapter describes how the electrodes are detected and labelled from innermo
 The images are normalized using contrast stretching. First a lower and upper bound of the input image histogram specified, we chose the 2nd and 98th percentile. Values outside of this range are ignored in the calculation to be robust against outliers. The lower and upper bound are set as the new minimum and maximum brightness, a linear transformation is applied to stretch the intensity values over the whole dynamic range of our data type. This function improves the contrast of low contrast images without distorting the relative intensities, while high contrast images remain mostly unchanged\footnote{\url{http://homepages.inf.ed.ac.uk/rbf/HIPR2/stretch.htm}}\footnote{\url{https://scikit-image.org/docs/0.9.x/auto_examples/plot_equalize.html}}. This step is necessary as threshold is applied on the response value of the following blob detection, which is dependent on the absolute image intensities.
 
 \subsubsection{Blob detection}
-To detect bright spots in the image which could represent electrodes, blob detection Laplacian of Gaussian (LoG) blob detection is applied. It was selected over other implementations of the blob detection, as it provides the most accurate results\footnote{\url{https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_blob.html}} and computation speed is not a criterion. The second derivatives of Gaussian kernels with different sigma values are convoluted with the input image. For each image location the response value and the sigma value with which the highest response was achieved are stored. The results are filtered a) to only contain Gaussian responses of certain sigma values, representing the size of the electrodes, and b) to only contain responses of a certain intensity, which filters out the response to image noise or other blob-like structures with weaker intensities than the electrodes we are interested in. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
+To detect bright spots in the image which could represent electrodes, blob detection Laplacian of Gaussian (LoG) blob detection is applied.
+$$
+\operatorname{LoG}(x, y)=-\frac{1}{\pi \sigma^{4}}\left[1-\frac{x^{2}+y^{2}}{2 \sigma^{2}}\right] e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
+$$
+It was selected over other implementations of the blob detection, as it provides the most accurate results\footnote{\url{https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_blob.html}} and computation speed is not a criterion. The second derivatives of Gaussian kernels with different sigma values are convoluted with the input image. For each image location the response value and the sigma value with which the highest response was achieved are stored. The results are filtered a) to only contain Gaussian responses of certain sigma values, representing the size of the electrodes, and b) to only contain responses of a certain intensity, which filters out the response to image noise or other blob-like structures with weaker intensities than the electrodes we are interested in. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
 provided by the \emph{scikit-image} \cite{scikit-image} library was used.
 See figure \ref{blobs_detected} as an example of an output. The threshold was intentionally set low, so blobs can also be detected in images where the electrodes are differentiated weaker.
 
@@ -56,7 +60,7 @@ As the information of the pattern to be recognized is mostly structural, a graph
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
 
-\subsubsubsection{Empirial detection of angle and distance range}
+\subsubsection{Empirial detection of angle and distance range}
 The angles between the electrodes (e.g. between electrode 1,2 and 3) differ among electrodes; therefore, a specific range could be determined empirically: 
 \begin{enumerate}
 \item The maximal and minimal possible angle between 3 electrodes (ground truth data) was calculated considering the fact that our blob detection could detect blobs deviation by 15pxl from the true blob center. 
