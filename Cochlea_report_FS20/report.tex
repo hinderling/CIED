@@ -1,5 +1,5 @@
-\documentclass[a4paper, 10pt, twocolumn]{article}
-\usepackage[a4paper, left=.7in, right=.7in, top=1in]{geometry} %less whitespace
+\documentclass[a4paper, 11pt]{article}
+\usepackage[a4paper, left=1.2in, right=1.2in, top=1in]{geometry} %less whitespace
 \usepackage{graphicx} 				%Include figures
 \graphicspath{ {figures/} } 		%Path where images are stored
 \usepackage[scaled]{helvet} 		%Helvetica font
@@ -27,7 +27,7 @@ Profound hearing loss is most commonly treated with cochlear implants (CIs), whi
 
 \section{Methods}
 \subsection{Ground truth creation}
-To make a more precise analysis of the training set, we identified the coordinates of the twelve electrodes by hand. For this we used the online tool  \emph{Make Sense}\cite{makesense}. 
+To make a more precise analysis of the training set, we identified the coordinates of the twelve electrodes by hand. For this we used the online tool  \emph{Make Sense} \cite{makesense} .
 \subsection{Electrode detection and labelling}
 This chapter describes how the electrodes were detected and labelled from innermost to outermost.
 \subsubsection{Preprocessing}
@@ -36,7 +36,7 @@ The images were normalized using contrast stretching. First a lower and upper bo
 \subsubsection{Blob detection}
 To detect bright spots in the image which could represent electrodes, blob detection Laplacian of Gaussian (LoG) blob detection is applied.
 $$
-\log(x, y)=-\frac{1}{\pi \sigma^{4}}\left[1-\frac{x^{2}+y^{2}}{2 \sigma^{2}}\right] e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
+\LoG(x, y)=-\frac{1}{\pi \sigma^{4}}\left[1-\frac{x^{2}+y^{2}}{2 \sigma^{2}}\right] e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
 $$
 It was selected over other implementations of the blob detection, as it provides the most accurate results\footnote{\url{https://scikit-image.org/docs/dev/auto_examples/features_detection/plot_blob.html}} and computation speed is not a criterion. The second derivatives of Gaussian kernels with different sigma values are convoluted with the input image. For each image location the response value and the sigma value with which the highest response was achieved are stored. The results are filtered a) to only contain Gaussian responses of certain sigma values, representing the size of the electrodes, and b) to only contain responses of a certain intensity, which filters out the response to image noise or other blob-like structures with weaker intensities than the electrodes we are interested in. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
 provided by the \emph{scikit-image} \cite{scikit-image} library was used.
@@ -45,44 +45,32 @@ See figure \ref{blobs_detected} as an example of an output. The threshold was in
 \begin{figure}[ht]
 	\centering
   \includegraphics[width=.5\textwidth]{blobs_detected.png}
-	\caption{Image after contrast stretching. Red circles indicate locations where blobs have been detected. Radii are approximated using $r=\sqrt{2 \sigma }$.}
+	\caption{Image after contrast stretching. Red circles indicate locations where blobs have been detected. Radii are approximated using $r=\sqrt{2\sigma}$.}
 	\label{blobs_detected}
 \end{figure}
-
 
 \subsubsection{Blob selection and labelling with MLE}
 The next question is to filter the electrodes from all detected blobs and to find a path that connects them all, so they can be labelled from 1 to 12 accordingly.  
 As the information of the pattern to be recognized is mostly structural, a graph approach comes naturally. Some key information available on the electrodes can be boiled down to these points:
 
-\begin{description} %Info
+\begin{description}[] %Info
 \item[Electrode shape and intensity] The electrodes appear in a round shape and are brighter than the surrounding tissue. This information is already encoded in the model for blob detection.
 \item[Electrode count] There are exactly 12 electrodes to be detected in every image
 \item[Equidistance] All the distances between two adjacent electrodes are the same, as they are fixed onto the wire inserted in the cochlea in a regular pattern. Except the first and last electrode, all electrodes have exactly two neighbours. 
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
 
-
 \subsubsection{Empirial detection of angle and distance range}
 The angles between the electrodes (e.g. between electrode 1,2 and 3) differ among electrodes; therefore, a specific range could be determined empirically: 
 \begin{enumerate}
 \item The maximal and minimal possible angle between 3 electrodes (ground truth data) was calculated considering the fact that our blob detection could detect blobs deviation by 15pxl from the true blob center. 
-\item A confidence interval with confidence level 90 was constructed for every group of 3 electrodes (assuming a normal distribution), once using the minimal possible angles obtained (lower border of this CI $\rightarrow$ lower border of possible range) and once using the maximum angles obtained (upper border of this CI $\rightarrow$ upper border of possible range), see Figure \ref{mean_angles}.
-\begin{figure}[ht]
-	\centering
-  \includegraphics[width=.5\textwidth]{CI_and_mean_of_angles.png}
-	\caption{The black line connects the mean angle values, while the red lines connect the CI boundaries at a level of $\alpha$=0.1 of each electrode, considering the possible deviation of our blob detection from the truth.} %TODO
-	\label{mean_angles}
-\end{figure}
-\end{enumerate}
-Also, the range in which the distances between the electrodes can be, was determined empirically. This is a stronger assumption, as it requires the images to show the cochlea in a normalized size. However, as this was approximately given for all received images, this seems reasonable to assume. The confidence interval with confidence level 90 was constructed using all distances (ground truth data, assuming a normal distribution); then the CI was enlarged by 2x the possible blob deviation of 15pxl at both borders (as both electrodes between which the distance is measured can deviate by max 15 pxl) (see fig. \ref{dist_distribution}). 
-\begin{figure}[ht]
-	\centering
-  \includegraphics[width=.5\textwidth]{distances_distribution.png}
-	\caption{The frequency of all distances, fitted to a normal distribution(orange). The red lines show the border of the CI at a level of $\alpha$=0.1, each extended by 30 due to the possible deviation of our blob detection from the truth} %TODO
-	\label{dist_distribution}
-\end{figure}
+\item A confidence interval with confidence level 90 was constructed for every group of 3 electrodes (assuming a normal distribution), once using the minimal possible angles obtained (lower border of this CI \rightarrow lower border of possible range) and once using the maximum angles obtained (upper border of this CI \rightarrow upper border of possible range). See Figure.
+
+Also, the range in which the distances between the electrodes can be, was determined empirically. This is a stronger assumption, as it requires the images to show the cochlea in a normalized size. However, as this was approximately given for all received images, this seems reasonable to assume. The confidence interval with confidence level 90 was constructed using all distances (ground truth data, assuming a normal distribution); then the CI was enlarged by 2x the possible blob deviation of 15pxl at both borders (as both electrodes between which the distance is measured can deviate by max 15 pxl). 
+
+
 To remove outliers, we calculated the sum of the distances to the other blobs $D_{i}$ for each blob $i$ according to the formula below. Subsequently. we removed the blob that was furthest away from all others. This reduced the number of blobs to $n-1$. We repeated this process until the number of blobs was 20.
-%TODO Lucien: Gäu mir hei uf 20 Blobs reduziert? Lucien: "Ja"
+%TODO Lucien: Gäu mir hei uf 20 Blobs reduziert?
 
 $$D_{i}=\sum_{j\neq i}^{n} \sqrt{(b_ix-b_jx)^2+(b_iy-b_jy)^2}$$
 
@@ -98,8 +86,7 @@ A graph representation is created using the \emph{networkX} library \cite{networ
 Disconnected sub graphs containing less than 12 electrodes are removed.
 A set of valid paths is generated by using the information of the electrode count and spiral shape: Two neighbouring nodes are chosen as starting nodes (this is repeated for all $n$ nodes and all their neighbours). The two starting nodes are used as initialization values of $path_{1...i = len(path)} $ the following recursive function:
 
-%\begin{figure*}
-\begin{algorithm*}
+\begin{algorithm}[H]
 	\caption{findpath($graph,path$)} 
 	
 	\begin{algorithmic}[1]
@@ -124,13 +111,13 @@ A set of valid paths is generated by using the information of the electrode coun
 		\EndIf
 		
 	\end{algorithmic} 
-	\label{pseudo_code}
-\end{algorithm*}
-%\end{figure*}
+\end{algorithm}
+
 This leads to a set of paths $P$ where each path $p_i \in P$ is valid to the constraints of having exactly 12 nodes and not making impossible turns. Now, we filter the paths by assigning a cost function $c_a$ encoding our knowledge about the equidistance of the path: The cost is the variance of the length of all the edges connecting the 12 electrodes in the path $p_i$
 $$ c_a(p_i)=var(edges\in p_i)$$
 These values were then normalized with min-max normalization for each image. The path with the lowest cost was accepted as the right solution, giving us not only the 12 right nodes, but also the order in which they are connected.
 This already led to really good results in most of the images of the test set, except in two images where there was another path which had a lower edge length variance than the expected solution. These paths started further out, by wrongly assuming part of the wire leading to the outermost electrode as an electrode. To penalize these solutions, a second cost function $c_b$ was introduced, that measured the "compactness". It works by summing up all distances of each node to the mean location of all 12 nodes, assigning less cost to solutions that are nicely curled up, and more cost to solutions that are stretched out. 
+
 $$ c_b(p_i)=dist (nodes \in p_i\ to\ center\ of\ mass)$$
 The two cost functions are combined into $c_ {c}$. One can think of it as the euclidean distance of the two cost functions from the null point in figure \ref{feature_distribution}.
 
@@ -146,7 +133,7 @@ The distribution of $c_a$ and $c_b$ for all valid paths detected in one image ar
 \end{figure}
 
 
-\begin{figure*}[ht]
+\begin{figure}[ht]
 \begin{subfigure}[c]{0.32\textwidth}
 \includegraphics[width=1\textwidth]{best_path.png}
 \subcaption{Best path found}
@@ -161,12 +148,12 @@ The distribution of $c_a$ and $c_b$ for all valid paths detected in one image ar
 \end{subfigure}
 \caption{Paths taken from the feature distribution illustrated in figure \ref{feature_distribution}}
 \label{graphs}
-\end{figure*}
+\end{figure}
 This procedure meant each path was detected twice (forwards and backwards). To calculate the angles it is necessary to start counting at the right node. The starting node was decided by comparing the distance to the electrode center of mass for the first and last node in path.
 
 \subsection{Spectral center}
 The spectral center has been approximated as the center of the circle built by the three innermost electrodes.
-$$\overrightarrow{M1}+s*\overrightarrow{n1}=\overrightarrow{M2}+r*\overrightarrow{n2}$$where \overrightarrow{M1} = middle point between electrode 1 and 2, \overrightarrow{M2} = middle point between electrode 2 and 3, s/r= some numbers, \overrightarrow{n1}\ =\ normal vector to the vector connecting electrode 1 and 2, \overrightarrow{n2}\ =\ normal vector to the vector connecting electrode 2 and 3.
+$$\overrightarrow{M1}+s*\overrightarrow{n1}=\overrightarrow{M2}+r*\overrightarrow{n2}$$ ,where \overrightarrow{M1}=middle point between electrode 1 and 2, \overrightarrow{M2}=middle point between electrode 2 and 3, s/r= some numbers, \overrightarrow{n1}=normal vector to the vector connecting electrode 1 and 2, \overrightarrow{n2}=normal vector to the vector connecting electrode 2 and 3.
 
 
 \section{Results}
