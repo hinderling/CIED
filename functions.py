@@ -119,7 +119,9 @@ def gt(filename):
     return out
 
 def spectral_center(coords):
-    """calculates and reterns the spectral center point """
+    """takes a sorted list of all electrodes, of the form
+        [electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care]
+        just as in gt/labels.csv (but sorted!) and calculates and returns the spectral center point """
     #vector from electrode 1 to electrode 2
     v1=np.array([coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]])
     #corresponding normal vector
@@ -161,7 +163,7 @@ def distances_and_angles(all_electrodes):
     '''takes a list of all electrodes, of the form
     electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
     just as in gt/labels.csv
-    returns distances and angles starting at the outermost electrode (eg electrode with highest nr)'''
+    returns distances and angles between them starting at the outermost electrode (ie electrode with highest nr)'''
     all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
     #start at outermost electrode
     electrode_nr=[]
@@ -186,7 +188,8 @@ def distances_and_angles(all_electrodes):
 def plot_distances_angles(all_electrodes):
     '''takes a list of all electrodes, of the form
         electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
-        just as in gt/labels.csv'''
+        just as in gt/labels.csv
+        Plots the distances and angles between electrodes for each electrode'''
     electrode_nr, distances, angles=distances_and_angles(all_electrodes)
     plt.subplot(121)
     plt.plot(electrode_nr, distances)
@@ -197,7 +200,7 @@ def plot_distances_angles(all_electrodes):
 #
 def plot_gt_distances_angles(images_list):
     '''takes a list of all gt images, returns the mean and std for the distances and angles between the electrodes
-    & also plots this'''
+    & also plots the mean'''
     gt_distances = []
     gt_angles = []
     for image in images_list:
@@ -267,7 +270,7 @@ def min_and_max_angles(all_electrodes, deviation_blob_detection):
     electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
     just as in gt/labels.csv
     and the max deviation of detected blob to true blob (i.e. 15 pixels in our blob detection)
-    returns electrode nr, min and max angles starting at the outermost electrode (eg electrode with highest nr)'''
+    returns electrode nr, min and max angles between each 3 electrodes, starting at the outermost electrode (ie electrode with highest nr)'''
     all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
     #start at outermost electrode
     electrode_nr=[]
@@ -350,7 +353,8 @@ def create_angle_dict (angles, gt_angles, images_list):
     return(angle_dict)
 
 def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level=0.9, deviation_blob_detection=0):
-    '''returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
+    '''takes a list of data and a string for the plot title
+    returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
     in a list, assuming a normal distribution.
     If not specified differently, a plot is produced
     If not specified differently, no deviation in the blob detection is considered'''
@@ -375,6 +379,27 @@ def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level
         plt.close()
     return(CI_lower, CI_upper)
 
+def create_CI_angles_plot(CI_dict_angles):
+    '''takes a dictionary with the electrode nr minus 2 as keys and a list [CI lower, CI upper, mean] as values
+    (output of CI_gt_distances_angles() ) and plots the mean and the CI for each angle'''
+    x=[]
+    mü=[]
+    CI_upper=[]
+    CI_lower=[]
+    for key in CI_dict_angles:
+        x.append(key+2)
+        mü.append(CI_dict_angles[key][2])
+        CI_upper.append(CI_dict_angles[key][1])
+        CI_lower.append(CI_dict_angles[key][0])
+    plt.plot(x, mü, color='black')
+    plt.plot(x, CI_upper, color='red')
+    plt.plot(x, CI_lower,color='red')
+    plt.title('CI and mean of angles')
+    plt.xlabel('electrode nr.')
+    plt.ylabel('angle')
+    plt.xticks(range(min(x), max(x)+1, 1))
+    plt.savefig('CI_and_mean_of_angles')
+    plt.close()
 
 def plot_coordinates(image, coords, title=None):
     """
