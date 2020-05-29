@@ -7,7 +7,6 @@ from sklearn.preprocessing import MinMaxScaler
 
 def get_blobs (image,nb_blobs):
     from skimage.feature import blob_log
-
     """
     returns list of Y,X coordinates and approximate radii of blobs detected  (x and y are switched!).
     removes blobs that are far away from blob center of mass until only nb_blobs are left
