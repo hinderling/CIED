@@ -401,30 +401,7 @@ def create_CI_angles_plot(CI_dict_angles):
     plt.savefig('CI_and_mean_of_angles')
     plt.close()
 
-def plot_coordinates(image, coords, title=None):
-    """
-    :param image: numpy array
-    :param title: title to be displayed
-    :param coords:
 
-    matrix of the format:
-    [[1     x1     y1]
-     [2     x2     y2]
-     [      ...      ]
-     [12    x12   y12]
-    :return: None
-    """
-    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
-    ax.set_title(title)
-    ax.imshow(image)
-
-    for n, x, y in coords:
-        c = plt.Circle((x, y), 20, color='red', linewidth=2, fill=False)
-        ax.add_patch(c)
-
-        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
-
-    plt.show()
 
 def save_csv(angles_all, center_all, names_all, coordinates_all):
     """
@@ -452,3 +429,54 @@ def save_csv(angles_all, center_all, names_all, coordinates_all):
         writer = csv.writer(out, delimiter=';')
         writer.writerows(lines)
     return None
+
+
+def plot_results(image, coords, title=None):
+    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
+    ax.set_title(title)
+    ax.imshow(image)
+
+    for n, x, y in coords:
+        c = plt.Circle((x, y), 20, color='red', linewidth=2, fill=False)
+        ax.add_patch(c)
+
+        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    plt.show()
+
+def plot_coordinates(image, coords,center, angles, title=None):
+    """
+    :param image: numpy array
+    :param title: title to be displayed
+    :param coords:
+
+    matrix of the format:
+    [[1     x1     y1]
+     [2     x2     y2]
+     [      ...      ]
+     [12    x12   y12]
+    :return: None
+    """
+    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
+    ax.set_title(title)
+    ax.imshow(image, cmap=plt.get_cmap('gray'))
+    xm, ym = center
+    for n, x, y in coords:
+
+
+
+
+
+
+        plt.plot((x,xm), (y,ym), 'ro-',lw=1)
+
+
+        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    plt.text(xm, ym + 40, s="C", fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    # c = plt.Circle((center), 20, color='green', linewidth=2, fill=False)
+    # ax.add_patch(c)
+
+    plt.show()
+
