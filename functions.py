@@ -439,7 +439,7 @@ def plot_results(image, coords, title=None):
 
     plt.show()
 
-def plot_coordinates(image, coords,center, title=None):
+def plot_coordinates(image, coords,center, i, title=None):
     """
     :param image: numpy array
     :param title: title to be displayed
@@ -472,6 +472,7 @@ def plot_coordinates(image, coords,center, title=None):
 
     # c = plt.Circle((center), 20, color='green', linewidth=2, fill=False)
     # ax.add_patch(c)
+    # plt.savefig(f"images/{i}.png")
 
     plt.show()
 

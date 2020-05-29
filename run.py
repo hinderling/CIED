@@ -44,7 +44,7 @@ differences = []
 
 #find in what range distance and angles can be
 dist_CI, dict, min_angle,max_angle = CI_gt_distances_angles(image_names_gt())
-
+i = 1
 for image, name in zip(all_post, base_names):
 
     
@@ -60,7 +60,8 @@ for image, name in zip(all_post, base_names):
     # Calculate the cochlea center and angular depth from electrode positions
     center, angles=all_angles(coordinates)
 
-    plot_coordinates(image,coordinates, center)
+    plot_coordinates(image,coordinates, center, i)
+    i += 1
     # STORING DATA TO EXPORT TO CSV
     coordinates_all.append(coordinates)
     angles_all.append(angles)
