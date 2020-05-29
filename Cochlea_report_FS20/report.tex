@@ -56,6 +56,15 @@ As the information of the pattern to be recognized is mostly structural, a graph
 \item[Spiral shape] The wire inserted follows the form of the cochlea and has a spiral shape. The cochlea turns in a regular pattern and has no sharp angles. The electrode density is highest in the cochlea where the turns get tighter.
 \end{description}
 
+\subsubsubsection{Empirial detection of angle and distance range}
+The angles between the electrodes (e.g. between electrode 1,2 and 3) differ among electrodes; therefore, a specific range could be determined empirically: 
+\begin{enumerate}
+\item The maximal and minimal possible angle between 3 electrodes (ground truth data) was calculated considering the fact that our blob detection could detect blobs deviation by 15pxl from the true blob center. 
+\item A confidence interval with confidence level 90 was constructed for every group of 3 electrodes (assuming a normal distribution), once using the minimal possible angles obtained (lower border of this CI \rightarrow lower border of possible range) and once using the maximum angles obtained (upper border of this CI \rightarrow upper border of possible range). See Figure.
+
+Also, the range in which the distances between the electrodes can be, was determined empirically. This is a stronger assumption, as it requires the images to show the cochlea in a normalized size. However, as this was approximately given for all received images, this seems reasonable to assume. The confidence interval with confidence level 90 was constructed using all distances (ground truth data, assuming a normal distribution); then the CI was enlarged by 2x the possible blob deviation of 15pxl at both borders (as both electrodes between which the distance is measured can deviate by max 15 pxl). 
+
+
 To remove outliers, we calculated the sum of the distances to the other blobs $D_{i}$ for each blob $i$ according to the formula below. Subsequently. we removed the blob that was furthest away from all others. This reduced the number of blobs to $n-1$. We repeated this process until the number of blobs was 20.
 %TODO Lucien: Gäu mir hei uf 20 Blobs reduziert?
 
