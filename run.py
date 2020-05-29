@@ -59,10 +59,6 @@ for image, name in zip(all_post, base_names):
     coordinates = find_electrodes(image, dist_CI, dict)
 
 
-    # print(name)
-    # truth=gt(str(name))
-    # print('difference',np.subtract(truth, coordinates))
-
 
     # Calculate the cochlea center and angular depth from electrode positions
     center, angles=all_angles(coordinates)
