@@ -47,6 +47,7 @@ dist_CI, dict, min_angle,max_angle = CI_gt_distances_angles(image_names_gt())
 
 for image, name in zip(all_post, base_names):
 
+    
     # FIND Electrodes and store them in a matrix of this format:
     #
     # coordinates =
@@ -56,20 +57,16 @@ for image, name in zip(all_post, base_names):
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
     coordinates = find_electrodes(image, dist_CI, dict)
-
     # Calculate the cochlea center and angular depth from electrode positions
-    coordinate_copy = coordinates.copy()
-    center, angles=all_angles(coordinate_copy)
+    center, angles=all_angles(coordinates)
 
-    # plot results
-    plot_coordinates(image, coordinates, center, angles)
+
 
     # STORING DATA TO EXPORT TO CSV
     coordinates_all.append(coordinates)
     angles_all.append(angles)
     center_all.append(center)
     names_all.append(name)
-
 
 save_csv(angles_all, center_all, names_all, coordinates_all)
 
