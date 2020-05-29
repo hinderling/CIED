@@ -7,9 +7,12 @@ from sklearn.preprocessing import MinMaxScaler
 
 def get_blobs (image,nb_blobs):
     from skimage.feature import blob_log
-    #returns list of Y,X coordinates and approximate radii of blobs detected
-    #removes blobs that are far away until only nb_blobs are left (x and y are switched!!)
-    
+
+    """
+    returns list of Y,X coordinates and approximate radii of blobs detected  (x and y are switched!).
+    removes blobs that are far away from blob center of mass until only nb_blobs are left
+    """
+
     image_gray = rgb2gray(image)
 
     #preprocessing: contrast stretching
@@ -40,10 +43,17 @@ def get_blobs (image,nb_blobs):
     return blobs_log
 
 def blob_dist(blob1, blob2):
+    """
+    returns the distance between two blobs
+    """
+
     return distance(blob1[0:2], blob2[0:2])
 
 def blobs_in_range(center, blobs, max_range):
-    #check which blobs are inside of range
+    """
+    check which blobs are inside of range
+    """
+    
     blobs_in_range = []
     for i, blob in enumerate(blobs):
         if dist(center,blob)<= max_range:
@@ -51,6 +61,9 @@ def blobs_in_range(center, blobs, max_range):
     return blobs_in_range
 
 def blob_angle(blob1, blob2, blob3):
+    """
+    calculates the angle between two vectors defined by three nodes [N1 ---v1--> N2 ---v2--> N3]
+    """
     x1, y1, r = blob1
     x2, y2, r = blob2
     x3, y3, r = blob3    
@@ -61,7 +74,10 @@ def blob_angle(blob1, blob2, blob3):
     return angle((v1_x,v1_y),(v2_x,v2_y))
 
 def remove_unconnected(graph):
-    #removes subgraphs that have <12 nodes as they cannot be our electrodes
+    """
+    removes subgraphs that have <12 nodes as they cannot be our electrodes    
+    """
+    
     components_generator = nx.connected_components(graph)
     components = [graph.subgraph(c).copy() for c in components_generator]
     for component in components:
@@ -71,6 +87,9 @@ def remove_unconnected(graph):
     #draw_graph(S[0],pos)
 
 def dist_var_of_path(blobs, path):
+    """
+    returns the variance of distances in a path connecting blobs   
+    """
     dists = []
     route_edges = [(path[n],path[n+1]) for n in range(len(path)-1)]
     for a,b in route_edges:
@@ -78,6 +97,9 @@ def dist_var_of_path(blobs, path):
     return np.var(dists)  
 
 def path_compactness(blobs, path):
+    """
+    calculates the sum of distances from all nodes from the nodes center of mass   
+    """
     coordinates = blobs[path,0:2]
     x_mean = np.mean(coordinates[:,0])
     y_mean = np.mean(coordinates[:,1])
@@ -85,14 +107,16 @@ def path_compactness(blobs, path):
     return np.sum(distances)
 
 def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs, CI_angle):
-    #graph_full: the whole graph
-    #graph_left: the part of the graph that is still available
-    #path_chosen: list of nodes that make up this path: [starting node, ... , end node]
+    """
+    find a neighbouring node that can continue our path  
+        graph_full: the whole graph
+        graph_left: the part of the graph that is still available
+        path_chosen: list of nodes that make up this path: [starting node, ... , end node]
+    """
+
     if len(path_chosen)==12:
         return [path_chosen]
     paths_chosen = []
-    #CI_upper_border=CI_gt_distances_angles(image_names_gt())[2]
-    #CI_lower_border=CI_gt_distances_angles(image_names_gt())[3]
     for neighbor in graph_left.neighbors(path_chosen[-1]):
         blob1 = blobs[neighbor,:]
         blob2 = blobs[path_chosen[-1],:]
@@ -112,17 +136,12 @@ def get_next_possible_neigbours(graph_full, graph_left, path_chosen, blobs, CI_a
             for solution in recursive_return:
                 paths_chosen.append(solution)
     return paths_chosen
-         
-
-def angle_difference(path,blobs):
-    for n in range(len(path)-2):
-        blob1 = blobs[n,:]
-        blob2 = blobs[n+1,:]
-        blob3 = blobs[n+2,:]
-        this_angle = blob_angle(blob1, blob2, blob3)
-        print(this_angle)
+        
 
 def path_likelihood(path,blobs,variances,compactness):
+    """
+    calculate the likelihood of a path that is the right way to connect the 12 electrodes
+    """
     mat = np.zeros((len(variances),2)) 
     mat[:,0]= variances
     mat[:,1]=compactness
@@ -140,7 +159,9 @@ def path_likelihood(path,blobs,variances,compactness):
     return best_path
 
 def output(blobs, path):
-    
+    """
+    selects the right order of the electrodes [1-12 vs 12-1], formats the output
+    """
     coordinates = blobs[path,0:2]
     y_mean = np.mean(coordinates[:,0])
     x_mean = np.mean(coordinates[:,1])
@@ -162,12 +183,15 @@ def output(blobs, path):
     
 
 def find_electrodes(input_image, CI_dist, CI_angle):
-    ### INPUT: AN IMAGE (post scan with electrodes) 
-        #e.g
-        #allpost, allpre, basenames = load("DATA")
-        #find_electrodes(allpost[1])
+    """
+    INPUT: AN IMAGE (post scan with electrodes) 
+        e.g
+        allpost, allpre, basenames = load("DATA")
+        find_electrodes(allpost[1])
 
-    ### OUTPUT: A matrix with coordinates and order of electrodes
+    OUTPUT: A matrix with coordinates and order of electrodes
+    """
+    
 
     blobs = get_blobs(input_image,20)
     graph = nx.Graph()
@@ -205,7 +229,3 @@ def find_electrodes(input_image, CI_dist, CI_angle):
     to_return = output(blobs,path)
 
     return to_return
-
-#allpost, allpre = load("DATA")
-#result = find_electrodes(allpost[1])
-#print(result)
