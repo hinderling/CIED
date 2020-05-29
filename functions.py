@@ -439,7 +439,7 @@ def plot_results(image, coords, title=None):
 
     plt.show()
 
-def plot_coordinates(image, coords,center, angles, title=None):
+def plot_coordinates(image, coords,center, title=None):
     """
     :param image: numpy array
     :param title: title to be displayed
