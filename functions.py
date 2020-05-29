@@ -354,7 +354,7 @@ def create_angle_dict (angles, gt_angles, images_list):
 
 def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level=0.9, deviation_blob_detection=0):
     '''takes a list of data and a string for the plot title
-    returns the confidence interval at a confidence level of 0.99 (or whatever, if specified differently) of values
+    returns the confidence interval at a confidence level of 0.9 (or whatever, if specified differently) of values
     in a list, assuming a normal distribution.
     If not specified differently, a plot is produced
     If not specified differently, no deviation in the blob detection is considered'''
