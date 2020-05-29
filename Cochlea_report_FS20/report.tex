@@ -186,6 +186,11 @@ In the example in figure \ref{UNET}, eleven of the twelve electrodes were correc
 
 The use of a graph approach allows us to be less strict on the blob filtering thresholds. We considered a multitude of other cost functions (e.g. penalizing direction changes, inferring likelihood of angles between specific electrode numbers using empirically determined angle distributions, penalizing crossing edges) which we did not implement as satisfactory results were already achieved with only two features.
 
+However, a very narrow confidence interval (at a level of 90!) had to be used to prevent certain edges in the graphs to be created. Image ID04 was most critical, as the distance between electrodes 7/1 and 1/8 are more evenly spaced than the distance between electrodes 7/8. As in this image, a confidence level of 95 allowed the more evenly spaced edges from electrode 7 to 1 to 8, those were actually preferred by our graph algorithm leading to a wrong result. 
+Of course, when using our algorithm for data where the ground truth is unknown, a CI interval of 90 could be too restrictive. On the other hand, if more ground truth data could have been used to find the CI interval, the latter would be more narrow; if the mean of our data is not deviating much from the true value, our narrow CI would be no problem. 
+This problem could also be solved using more cost functions as discussed above. 
+
+
 
 %TODO add more
 
