@@ -27,7 +27,7 @@ Profound hearing loss is most commonly treated with cochlear implants (CIs), whi
 
 \section{Methods}
 \subsection{Ground truth creation}
-To make a more precise analysis of the training set, we identified the coordinates of the twelve electrodes by hand. For this we used the online tool  \emph{Make Sense}\cite{makesense}.
+To make a more precise analysis of the training set, we identified the coordinates of the twelve electrodes by hand. For this we used the online tool  \emph{Make Sense}\cite{makesense}. 
 \subsection{Electrode detection and labelling}
 This chapter describes how the electrodes were detected and labelled from innermost to outermost.
 \subsubsection{Preprocessing}
@@ -49,6 +49,7 @@ See figure \ref{blobs_detected} as an example of an output. The threshold was in
 	\label{blobs_detected}
 \end{figure}
 
+
 \subsubsection{Blob selection and labelling with MLE}
 The next question is to filter the electrodes from all detected blobs and to find a path that connects them all, so they can be labelled from 1 to 12 accordingly.  
 As the information of the pattern to be recognized is mostly structural, a graph approach comes naturally. Some key information available on the electrodes can be boiled down to these points:
@@ -65,13 +66,21 @@ As the information of the pattern to be recognized is mostly structural, a graph
 The angles between the electrodes (e.g. between electrode 1,2 and 3) differ among electrodes; therefore, a specific range could be determined empirically: 
 \begin{enumerate}
 \item The maximal and minimal possible angle between 3 electrodes (ground truth data) was calculated considering the fact that our blob detection could detect blobs deviation by 15pxl from the true blob center. 
-\item A confidence interval with confidence level 90 was constructed for every group of 3 electrodes (assuming a normal distribution), once using the minimal possible angles obtained (lower border of this CI $\rightarrow$ lower border of possible range) and once using the maximum angles obtained (upper border of this CI $\rightarrow$ upper border of possible range). See Figure.
+\item A confidence interval with confidence level 90 was constructed for every group of 3 electrodes (assuming a normal distribution), once using the minimal possible angles obtained (lower border of this CI $\rightarrow$ lower border of possible range) and once using the maximum angles obtained (upper border of this CI $\rightarrow$ upper border of possible range), see Figure \ref{mean_angles}.
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=.5\textwidth]{CI_and_mean_of_angles.png}
+	\caption{The black line connects the mean angle values, while the red lines connect the CI boundaries at a level of $\alpha$=0.1 of each electrode, considering the possible deviation of our blob detection from the truth.} %TODO
+	\label{mean_angles}
+\end{figure}
 \end{enumerate}
-
-
-Also, the range in which the distances between the electrodes can be, was determined empirically. This is a stronger assumption, as it requires the images to show the cochlea in a normalized size. However, as this was approximately given for all received images, this seems reasonable to assume. The confidence interval with confidence level 90 was constructed using all distances (ground truth data, assuming a normal distribution); then the CI was enlarged by 2x the possible blob deviation of 15pxl at both borders (as both electrodes between which the distance is measured can deviate by max 15 pxl). 
-
-
+Also, the range in which the distances between the electrodes can be, was determined empirically. This is a stronger assumption, as it requires the images to show the cochlea in a normalized size. However, as this was approximately given for all received images, this seems reasonable to assume. The confidence interval with confidence level 90 was constructed using all distances (ground truth data, assuming a normal distribution); then the CI was enlarged by 2x the possible blob deviation of 15pxl at both borders (as both electrodes between which the distance is measured can deviate by max 15 pxl) (see fig. \ref{dist_distribution}). 
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=.5\textwidth]{distances_distribution.png}
+	\caption{The frequency of all distances, fitted to a normal distribution(orange). The red lines show the border of the CI at a level of $\alpha$=0.1, each extended by 30 due to the possible deviation of our blob detection from the truth} %TODO
+	\label{dist_distribution}
+\end{figure}
 To remove outliers, we calculated the sum of the distances to the other blobs $D_{i}$ for each blob $i$ according to the formula below. Subsequently. we removed the blob that was furthest away from all others. This reduced the number of blobs to $n-1$. We repeated this process until the number of blobs was 20.
 %TODO Lucien: Gäu mir hei uf 20 Blobs reduziert? Lucien: "Ja"
 
@@ -118,12 +127,10 @@ A set of valid paths is generated by using the information of the electrode coun
 	\label{pseudo_code}
 \end{algorithm*}
 %\end{figure*}
-
 This leads to a set of paths $P$ where each path $p_i \in P$ is valid to the constraints of having exactly 12 nodes and not making impossible turns. Now, we filter the paths by assigning a cost function $c_a$ encoding our knowledge about the equidistance of the path: The cost is the variance of the length of all the edges connecting the 12 electrodes in the path $p_i$
 $$ c_a(p_i)=var(edges\in p_i)$$
 These values were then normalized with min-max normalization for each image. The path with the lowest cost was accepted as the right solution, giving us not only the 12 right nodes, but also the order in which they are connected.
 This already led to really good results in most of the images of the test set, except in two images where there was another path which had a lower edge length variance than the expected solution. These paths started further out, by wrongly assuming part of the wire leading to the outermost electrode as an electrode. To penalize these solutions, a second cost function $c_b$ was introduced, that measured the "compactness". It works by summing up all distances of each node to the mean location of all 12 nodes, assigning less cost to solutions that are nicely curled up, and more cost to solutions that are stretched out. 
-
 $$ c_b(p_i)=dist (nodes \in p_i\ to\ center\ of\ mass)$$
 The two cost functions are combined into $c_ {c}$. One can think of it as the euclidean distance of the two cost functions from the null point in figure \ref{feature_distribution}.
 
@@ -159,7 +166,7 @@ This procedure meant each path was detected twice (forwards and backwards). To c
 
 \subsection{Spectral center}
 The spectral center has been approximated as the center of the circle built by the three innermost electrodes.
-$$\overrightarrow{M1}+s*\overrightarrow{n1}=\overrightarrow{M2}+r*\overrightarrow{n2}$$ ,where \overrightarrow{M1}=middle point between electrode 1 and 2, \overrightarrow{M2}=middle point between electrode 2 and 3, s/r= some numbers, \overrightarrow{n1}=normal vector to the vector connecting electrode 1 and 2, \overrightarrow{n2}=normal vector to the vector connecting electrode 2 and 3.
+$$\overrightarrow{M1}+s*\overrightarrow{n1}=\overrightarrow{M2}+r*\overrightarrow{n2}$$where \overrightarrow{M1} = middle point between electrode 1 and 2, \overrightarrow{M2} = middle point between electrode 2 and 3, s/r= some numbers, \overrightarrow{n1}\ =\ normal vector to the vector connecting electrode 1 and 2, \overrightarrow{n2}\ =\ normal vector to the vector connecting electrode 2 and 3.
 
 
 \section{Results}
