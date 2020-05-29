@@ -440,7 +440,6 @@ def save_csv(angles_all, center_all, names_all, coordinates_all):
     for angles, center, name, cords in zip(angles_all, center_all, names_all, coordinates_all):
         lines[0] = lines[0]+[f'{name}_electrodes','x','y','angle','center_x','center_y','']
 
-        print(lines[0])
 
         for i, (angle, cord) in enumerate(zip(angles, cords)):
             if i == 0:
@@ -449,7 +448,6 @@ def save_csv(angles_all, center_all, names_all, coordinates_all):
                 cx, cy = ('','')
             lines[i+1] = lines[i+1] + [cord[0],cord[1],cord[2],angle,cx,cy, '']
 
-    print(lines[0])
     with open('out.csv', 'w', newline='') as out:
         writer = csv.writer(out, delimiter=';')
         writer.writerows(lines)
