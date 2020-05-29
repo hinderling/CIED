@@ -111,6 +111,7 @@ Disconnected sub graphs containing less than 12 electrodes were removed. A set o
 	\end{algorithmic} 
 	\label{pseudo_code}
 \end{algorithm*}
+
 %\end{figure*}
 This lead to a set of paths $P$ where each path $p_i \in P$ was valid to the constraints of having exactly 12 nodes and not making impossible turns. Subsequently, we filtered the paths by assigning a cost function $c_a$ encoding our knowledge about the equidistance of the path: The cost is the variance of the length of all the edges connecting the 12 electrodes in the path $p_i$
 $$ c_a(p_i)=var(edges\in p_i)$$
@@ -127,7 +128,8 @@ The distribution of $c_a$ and $c_b$ for all valid paths detected in one image ar
 	\caption{Costs of all paths found in an image. Three paths are highlighted to better illustrate what the dots stand for, and are pictured in the subsequent figures. \textbf{Red:} Best path found (lowest cost for $c_c$), \textbf{Yellow, Green:} Randomly selected.}
 	\label{feature_distribution}
 \end{figure}
-\begin{figure*}[H]
+
+\begin{figure*}[t]
 \begin{subfigure}[c]{0.32\textwidth}
 \includegraphics[width=1\textwidth]{best_path.png}
 \subcaption{Best path found}
@@ -159,10 +161,43 @@ The automatically detected electrode coordinates were compared with the coordina
 	\caption{The x and y pixel deviations of all electrodes in the training dataset from the ground truth dataset.}
 	\label{results_coord}
 \end{figure}
-The results for the full dataset can be found in the appendix \ref{results_complete}.
+The result for image \texttt{ID-06} are illustrated in figure \ref{10}, with the corresponding angles given in table \ref{table}. The electrode locations for the full dataset can be found in the appendix \ref{results_complete}.
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=.5\textwidth]{10.png}
+	\caption{Detected electrodes and center in image \texttt{ID-06}}
+	\label{10}
+\end{figure}
+
+\begin{table}[]
+\caption{Angular insertion depth of electrodes in image \texttt{ID-06}}
+    \label{table}
+    \begin{center}
+\begin{tabular}{lllll}
+
+\textbf{Electrode} & \textbf{Angle (in degrees)}\\
+      \hline
+1  & 362.43 &  &  &  \\
+2  & 315.57 &  &  &  \\
+3  & 262.80 &  &  &  \\
+4  & 215.87 &  &  &  \\
+5  & 173.60 &  &  &  \\
+6  & 133.36 &  &  &  \\
+7  & 89.64  &  &  &  \\
+8  & 49.16  &  &  &  \\
+9  & 22.00  &  &  &  \\
+10 & 10.60  &  &  &  \\
+11 & 4.75   &  &  &  \\
+12 & 0      &  &  & 
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
 \subsection{Other approaches explored: CNN}
 We have investigated different methods with which the electrodes in the image can be recognized. An exciting discovery was the UNET convolutional neural network, which has recently gained notoriety for its reliable, accurate segmentation of medical images and its ability to achieve excellent results even with limited training data \cite{ronneberger_u-net_2015}. The concept of this architecture is not discussed in detail in this report, as it is not included in the finalized version of our code. We created a training set with postoperative images and corresponding masks of only four examples. This was a very counter-intuitive approach, since more than a hundred times the amount of this data is usually recommended for training neural networks. \cite{hestness_deep_2017,foody_effect_1995}. To counteract overfitting, we used extensive data augmentation and included dropout layers in the architecture \cite{wu_towards_2015}. After training for 300 epochs, we could show very promising results.
-\begin{figure}[ht]
+\begin{figure}[]
 	\centering
   \includegraphics[width=.5\textwidth]{UNET.jpg}
 	\caption{Electrode region prediction by UNET. The green mask indicates the region predicted to include the electrodes with a certainty of more than 95\%.}
