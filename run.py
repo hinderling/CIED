@@ -68,6 +68,7 @@ for image, name in zip(all_post, base_names):
     center_all.append(center)
     names_all.append(name)
 
+
 save_csv(angles_all, center_all, names_all, coordinates_all)
 
 
