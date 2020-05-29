@@ -57,11 +57,6 @@ for image, name in zip(all_post, base_names):
     # [12    x12   y12]]
     # First row corresponds to the number of the electrode starting in the center
     coordinates = find_electrodes(image, dist_CI, dict)
-    print('coords',coordinates)
-    print(name)
-    truth=gt(str(name))
-    truth.sort()
-    print('difference',np.subtract(truth, coordinates))
     # Calculate the cochlea center and angular depth from electrode positions
     center, angles=all_angles(coordinates)
 
@@ -75,11 +70,4 @@ for image, name in zip(all_post, base_names):
 
 save_csv(angles_all, center_all, names_all, coordinates_all)
 
-#produce some plots for the report
-plots=False
-if plots==True:
-    gt_distances, gt_angle1, gt_angle11=gt_distances_angles1_and11(image_names_gt())
-    find_confidence(gt_distances, 'distances')
-    find_confidence(gt_angle1, 'angles 1')
-    find_confidence(gt_angle11,'angles_11')
-    plot_gt_distances_angles(image_names_gt())
+

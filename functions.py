@@ -371,7 +371,7 @@ def find_confidence(gt_list, plot_title, create_histogram=True, confidence_level
         lnspc = np.linspace(CI_lower, CI_upper, len(gt_list))
         m, s = stats.norm.fit(gt_list) # get mean and standard deviation
         pdf_g = stats.norm.pdf(lnspc, m, s) # now get theoretical values in our interval
-        plt.plot(lnspc, pdf_g, label="t-distribution") # plot it
+        plt.plot(lnspc, pdf_g, label="normal distribution") # plot it
         plt.axvline(mean, color='k', linestyle='dashed', linewidth=1)
         plt.axvline(CI_upper, color='red')
         plt.axvline(CI_lower, color='red')
