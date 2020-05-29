@@ -119,9 +119,9 @@ def gt(filename):
     return out
 
 def spectral_center(coords):
-    """takes a sorted list of all electrodes, of the form
+    """takes a list of all electrodes, of the form
         [electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care]
-        just as in gt/labels.csv (but sorted!) and calculates and returns the spectral center point """
+        just as in gt/labels.csv and calculates and returns the spectral center point """
     #vector from electrode 1 to electrode 2
     v1=np.array([coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]])
     #corresponding normal vector
@@ -147,7 +147,6 @@ def all_angles(coords):
     '''takes a list of all electrodes, of the form
         [electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care]
         just as in gt/labels.csv and returns the spectral center as well as the circular angles'''
-    coords.sort()  # electrodes are sometimes not in right order
     center=spectral_center(coords)
     center_to_electrode=coords[11][1]-center[0], coords[11][2]-center[1]
     angles=[0]
@@ -164,7 +163,6 @@ def distances_and_angles(all_electrodes):
     electrode nr    x coordinate    y coordinate    if something else comes too thereafter, I dont care
     just as in gt/labels.csv
     returns distances and angles between them starting at the outermost electrode (ie electrode with highest nr)'''
-    all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
     #start at outermost electrode
     electrode_nr=[]
     distances=[]
@@ -205,7 +203,6 @@ def plot_gt_distances_angles(images_list):
     gt_angles = []
     for image in images_list:
         all_electrodes = gt(str(image))
-        all_electrodes.sort()  # electrodes are sometimes not in right order
         electrode_nr, distances, angles = distances_and_angles(all_electrodes)
         gt_angles.append(angles)
         gt_distances.append(distances)
@@ -271,7 +268,6 @@ def min_and_max_angles(all_electrodes, deviation_blob_detection):
     just as in gt/labels.csv
     and the max deviation of detected blob to true blob (i.e. 15 pixels in our blob detection)
     returns electrode nr, min and max angles between each 3 electrodes, starting at the outermost electrode (ie electrode with highest nr)'''
-    all_electrodes.sort() #at least in gt/labels.csv it is sometimes not sorted
     #start at outermost electrode
     electrode_nr=[]
     min_angles=[]
@@ -308,7 +304,6 @@ def CI_gt_distances_angles(images_list, deviation_blob_detection=15):
     gt_max_angles=[]
     for image in images_list:
         all_electrodes = gt(str(image))
-        all_electrodes.sort()  # electrodes are sometimes not in right order
         electrode_nr, distances, angles = distances_and_angles(all_electrodes)
         electrode_nr, min_angles, max_angles= min_and_max_angles(all_electrodes, deviation_blob_detection=deviation_blob_detection)
         #those lists start at the outermost electrode (electrode 11, as for 12 there is no distance/angle)!!!
@@ -401,30 +396,7 @@ def create_CI_angles_plot(CI_dict_angles):
     plt.savefig('CI_and_mean_of_angles')
     plt.close()
 
-def plot_coordinates(image, coords, title=None):
-    """
-    :param image: numpy array
-    :param title: title to be displayed
-    :param coords:
 
-    matrix of the format:
-    [[1     x1     y1]
-     [2     x2     y2]
-     [      ...      ]
-     [12    x12   y12]
-    :return: None
-    """
-    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
-    ax.set_title(title)
-    ax.imshow(image)
-
-    for n, x, y in coords:
-        c = plt.Circle((x, y), 20, color='red', linewidth=2, fill=False)
-        ax.add_patch(c)
-
-        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
-
-    plt.show()
 
 def save_csv(angles_all, center_all, names_all, coordinates_all):
     """
@@ -440,7 +412,6 @@ def save_csv(angles_all, center_all, names_all, coordinates_all):
     for angles, center, name, cords in zip(angles_all, center_all, names_all, coordinates_all):
         lines[0] = lines[0]+[f'{name}_electrodes','x','y','angle','center_x','center_y','']
 
-        print(lines[0])
 
         for i, (angle, cord) in enumerate(zip(angles, cords)):
             if i == 0:
@@ -449,8 +420,59 @@ def save_csv(angles_all, center_all, names_all, coordinates_all):
                 cx, cy = ('','')
             lines[i+1] = lines[i+1] + [cord[0],cord[1],cord[2],angle,cx,cy, '']
 
-    print(lines[0])
     with open('out.csv', 'w', newline='') as out:
         writer = csv.writer(out, delimiter=';')
         writer.writerows(lines)
     return None
+
+
+def plot_results(image, coords, title=None):
+    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
+    ax.set_title(title)
+    ax.imshow(image)
+
+    for n, x, y in coords:
+        c = plt.Circle((x, y), 20, color='red', linewidth=2, fill=False)
+        ax.add_patch(c)
+
+        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    plt.show()
+
+def plot_coordinates(image, coords,center, i, title=None):
+    """
+    :param image: numpy array
+    :param title: title to be displayed
+    :param coords:
+
+    matrix of the format:
+    [[1     x1     y1]
+     [2     x2     y2]
+     [      ...      ]
+     [12    x12   y12]
+    :return: None
+    """
+    fig, ax = plt.subplots(1, 1, figsize=(9, 3), sharex=True, sharey=True)
+    ax.set_title(title)
+    ax.imshow(image, cmap=plt.get_cmap('gray'))
+    xm, ym = center
+    for n, x, y in coords:
+
+
+
+
+
+
+        plt.plot((x,xm), (y,ym), 'ro-',lw=1)
+
+
+        plt.text(x, y + 40, s=int(n), fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    plt.text(xm, ym + 40, s="C", fontsize=5, horizontalalignment='center', verticalalignment='center')
+
+    # c = plt.Circle((center), 20, color='green', linewidth=2, fill=False)
+    # ax.add_patch(c)
+    # plt.savefig(f"images/{i}.png")
+
+    plt.show()
+

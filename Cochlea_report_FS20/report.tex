@@ -159,10 +159,7 @@ The automatically detected electrode coordinates were compared with the coordina
 	\caption{The x and y pixel deviations of all electrodes in the training dataset from the ground truth dataset.}
 	\label{results_coord}
 \end{figure}
-%TODO Di grafik geit nid ah richtig Ort
-
-
-
+The results for the full dataset can be found in the appendix \ref{results_complete}.
 \subsection{Other approaches explored: CNN}
 We have investigated different methods with which the electrodes in the image can be recognized. An exciting discovery was the UNET convolutional neural network, which has recently gained notoriety for its reliable, accurate segmentation of medical images and its ability to achieve excellent results even with limited training data \cite{ronneberger_u-net_2015}. The concept of this architecture is not discussed in detail in this report, as it is not included in the finalized version of our code. We created a training set with postoperative images and corresponding masks of only four examples. This was a very counter-intuitive approach, since more than a hundred times the amount of this data is usually recommended for training neural networks. \cite{hestness_deep_2017,foody_effect_1995}. To counteract overfitting, we used extensive data augmentation and included dropout layers in the architecture \cite{wu_towards_2015}. After training for 300 epochs, we could show very promising results.
 \begin{figure}[ht]
@@ -189,5 +186,10 @@ The authors have worked very closely together in the realisation of this project
 
 \appendix
 \section{Results: Electrode and center detection}
-
+\begin{figure}[ht]
+	\centering
+  \includegraphics[width=.5\textwidth]{results_complete.jpeg} %TODO
+	\caption{Detected electrodes and center for all images in the dataset}
+	\label{results_complete}
+\end{figure}
 \end{document}
