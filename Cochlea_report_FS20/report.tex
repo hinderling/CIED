@@ -13,6 +13,7 @@
 \usepackage{algpseudocode} 			%for pseudocode
 \usepackage{subcaption}				%to include subfigures
 \usepackage{pdflscape}					%landscape pages
+\usepackage{siunitx}				%to align floating point numbers in tables to decimal places
 \begin{titlepage}
 \title{\textbf{Automatic Cochlear Implant Electrode Detection}\\ A graph based approach}
 \author{Tim Ogi, Lucien Hinderling, Dona Lerena}
@@ -173,22 +174,23 @@ The result for image \texttt{ID-06} are illustrated in figure \ref{10}, with the
 \caption{Angular insertion depth of electrodes in image \texttt{ID-06}}
     \label{table}
     \begin{center}
-\begin{tabular}{lllll}
-
+\begin{tabular}{|c|S[table-format=3.2]|} %{lllll}
+ \hline
 \textbf{Electrode} & \textbf{Angle (in degrees)}\\
       \hline
-1  & 362.43 &  &  &  \\
-2  & 315.57 &  &  &  \\
-3  & 262.80 &  &  &  \\
-4  & 215.87 &  &  &  \\
-5  & 173.60 &  &  &  \\
-6  & 133.36 &  &  &  \\
-7  & 89.64  &  &  &  \\
-8  & 49.16  &  &  &  \\
-9  & 22.00  &  &  &  \\
-10 & 10.60  &  &  &  \\
-11 & 4.75   &  &  &  \\
-12 & 0      &  &  & 
+1  & 362.43   \\
+2  & 315.57   \\
+3  & 262.80   \\
+4  & 215.87   \\
+5  & 173.60   \\
+6  & 133.36   \\
+7  & 89.64    \\
+8  & 49.16   \\
+9  & 22.00    \\
+10 & 10.60    \\
+11 & 4.75     \\
+12 & 0.00     \\ 
+ \hline
 \end{tabular}
 \end{center}
 \end{table}
@@ -218,15 +220,25 @@ The authors have worked very closely together in the realisation of this project
 
 \bibliography{references}
 \bibliographystyle{apalike}
-
+\onecolumn
 \begin{landscape}
-
+\thispagestyle{empty}
 \appendix
-\section{Results: Electrode and center detection}
-\begin{figure}[ht]
-    \includegraphics[width=\textwidth]{results.png}
-	\caption{Detected electrodes and center for all images in the dataset}
-	\label{results_complete}
-\end{figure}
+\section{Results: Detected electrodes and center for all images in the dataset}
+\mbox{} \par\includegraphics[width=1\paperwidth]{results.png}
+
+\label{results_complete}
+\noindent
+\mbox{} \par
+\vfill
+\makebox[\linewidth]{\thepage}
+%\begin{figure*}[]
+%    \includegraphics[width=1.3\paperwidth]{results.png}
+%	\caption{Detected electrodes and center for all images in the dataset}
+%	\label{results_complete}
+%\end{figure*}
 \end{landscape}
+
+
+
 \end{document}
