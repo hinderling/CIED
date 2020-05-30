@@ -155,6 +155,7 @@ def all_angles(coords):
         center_to_electrode=coords[i][1]-center[0], coords[i][2]-center[1]
         new_angle=angles[-1]+angle(before_center_to_electrode, center_to_electrode)
         angles.append(new_angle)
+    angles.reverse()
     return center, angles
 
 
