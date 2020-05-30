@@ -35,7 +35,7 @@ The electrodes represent local maxima in the brightness intensity of the CT imag
 $$
 \log(x, y)=-\frac{1}{\pi \sigma^{4}}\left[1-\frac{x^{2}+y^{2}}{2 \sigma^{2}}\right] e^{-\frac{x^{2}+y^{2}}{2 \sigma^{2}}}
 $$
-Six different LoGs were created by convolving the Laplacian kernel with Gaussian kernel of alternating sigma values [15, 17, 19, 21, 23, 25]. We only kept signals with a higher maximal intensity than 0.12. In doing so, we filtered out the response to image noise or other blob-like structures with four weaker intensities than the electrodes we were interested in. This intensity threshold was intentionally set low, so blobs could also be detected in images where the electrodes had a lower intensity. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
+Six different LoGs were created by convolving the Laplacian kernel with Gaussian kernel of alternating sigma values [15, 17, 19, 21, 23, 25]. We only kept signals with a higher maximal intensity than 0.12. In doing so, we filtered out the response to image noise or other blob-like structures with weaker intensities than the electrodes we were interested in. This intensity threshold was intentionally set low, so blobs could also be detected in images where the electrodes had a lower intensity. An implementation\footnote{\url{https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log}}.
 provided by the \emph{scikit-image} \cite{scikit-image} library was used.
 See figure \ref{blobs_detected} as an example of an output.
 \begin{figure}[ht]
